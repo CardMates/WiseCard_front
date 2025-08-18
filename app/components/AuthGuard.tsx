@@ -24,11 +24,6 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     );
   }
 
-  if (!isAuthenticated) {
-    router.replace('/onboarding');
-    return null; // Will redirect to onboarding
-  }
-
   return <>{children}</>;
 }
 
