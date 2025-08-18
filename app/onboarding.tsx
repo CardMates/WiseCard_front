@@ -1,8 +1,27 @@
+import { gsiButtonStyles } from '@/src/styles/buttons/GoogleLoginBtn';
 import React from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Pressable, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Colors from '../src/styles/colors';
 
 export default function OnboardingScreen() {
+
+  const GsiMaterialButton = ({ title, icon, onPress }: any) => {
+    return (
+      <Pressable
+        style={({ pressed }) => [
+          styles.button, gsiButtonStyles.gsiMaterialButton,
+          pressed && gsiButtonStyles.activeState,
+        ]}
+        onPress={onPress}
+      >
+        {icon && <Image source={icon} style={gsiButtonStyles.buttonIcon} />}
+        <View style={gsiButtonStyles.buttonContentWrapper}>
+          <Text style={gsiButtonStyles.buttonContents}>{title}</Text>
+        </View>
+      </Pressable>
+    );
+  }
+
   const handleKakaoLogin = () => {
     // TODO: Implement Kakao login
     console.log('Kakao login pressed');
@@ -31,14 +50,11 @@ export default function OnboardingScreen() {
           >
             <Text style={styles.kakaoButtonText}>Login with Kakao</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.googleButton]}
+          <GsiMaterialButton
+            title="Google 계정으로 로그인"
+            icon={require('../assets/images/g-logo.png')}
             onPress={handleGoogleLogin}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.googleButtonText}>Login with Google</Text>
-          </TouchableOpacity>
+          />
         </View>
       </View>
     </SafeAreaView>
@@ -75,17 +91,9 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 56,
-    borderRadius: 12,
+    borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   kakaoButton: {
     backgroundColor: '#FEE500',
