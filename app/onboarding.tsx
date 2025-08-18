@@ -1,5 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Colors from '../src/styles/colors';
 
 export default function OnboardingScreen() {
   const handleKakaoLogin = () => {
@@ -16,9 +17,9 @@ export default function OnboardingScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.title}>Welcome to WiseCard</Text>
+          <Text style={styles.title}>카드 혜택,{'\n'}제대로 누리고 계신가요?</Text>
           <Text style={styles.subtitle}>
-            Your smart companion for managing cards and finances
+            WiseCard에서 매장과 카드를 추천받고{'\n'}할인, 캐시백, 포인트 혜택을 남김 없이 누리세요.
           </Text>
         </View>
 
@@ -47,30 +48,27 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: Colors.BACKGROUND_LIGHT,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: 30,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 60,
+    marginBottom: 200,
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#1a1a1a',
-    textAlign: 'center',
+    color: Colors.PRIMARY_BLUE,
     marginBottom: 12,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: Colors.TEXT_SECONDARY,
     lineHeight: 24,
-    paddingHorizontal: 20,
   },
   buttonContainer: {
     gap: 16,
