@@ -1,18 +1,31 @@
 import { gsiButtonStyles } from '@/src/styles/buttons/GoogleLoginBtn';
+import { ksiButtonStyles } from '@/src/styles/buttons/KakaoLoginBtn';
 import React from 'react';
-import { Image, Pressable, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import Colors from '../src/styles/colors';
 
 export default function OnboardingScreen() {
   const [isLoginLoading, setIsLoginLoading] = React.useState(false);
 
-  const GsiMaterialButton = ({ title, icon, onPress, disabled }: any) => {
+  const SocialLoginButton = ({
+    title,
+    icon,
+    onPress,
+    disabled,
+    stylesSet
+  }: {
+    title: string;
+    icon: any;
+    onPress: () => void;
+    disabled?: boolean;
+    stylesSet: any; // gsiButtonStyles | ksiButtonStyles
+  }) => {
     return (
       <Pressable
         style={[
           styles.button,
-          gsiButtonStyles.gsiMaterialButton,
-          disabled && gsiButtonStyles.disabled,
+          stylesSet.materialButton,
+          disabled && stylesSet.disabled,
         ]}
         onPress={onPress}
         disabled={disabled}
@@ -20,11 +33,11 @@ export default function OnboardingScreen() {
         {icon && (
           <Image
             source={icon}
-            style={[gsiButtonStyles.buttonIcon, disabled && gsiButtonStyles.disabledIcon]}
+            style={[stylesSet.buttonIcon, disabled && stylesSet.disabledIcon]}
           />
         )}
-        <View style={gsiButtonStyles.buttonContentWrapper}>
-          <Text style={[gsiButtonStyles.buttonContents, disabled && gsiButtonStyles.disabledContents]}>
+        <View style={stylesSet.buttonContentWrapper}>
+          <Text style={[stylesSet.buttonContents, disabled && stylesSet.disabledContents]}>
             {title}
           </Text>
         </View>
@@ -32,9 +45,16 @@ export default function OnboardingScreen() {
     );
   }
 
-  const handleKakaoLogin = () => {
-    // TODO: Implement Kakao login
-    console.log('Kakao login pressed');
+  const handleKakaoLogin = async () => {
+    setIsLoginLoading(true);
+    try {
+      // TODO: Implement Kakao login
+      console.log('Kakao login pressed');
+      // await yourGoogleLogin();
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    } finally {
+      setIsLoginLoading(false);
+    }
   };
 
   const handleGoogleLogin = async () => {
@@ -60,18 +80,18 @@ export default function OnboardingScreen() {
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, styles.kakaoButton]}
+          <SocialLoginButton
+            title="카카오 계정으로 로그인"
+            icon={require('../assets/images/k-logo.png')}
             onPress={handleKakaoLogin}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.kakaoButtonText}>Login with Kakao</Text>
-          </TouchableOpacity>
-          <GsiMaterialButton
+            disabled={isLoginLoading}
+            stylesSet={ksiButtonStyles} />
+          <SocialLoginButton
             title="Google 계정으로 로그인"
             icon={require('../assets/images/g-logo.png')}
             onPress={handleGoogleLogin}
             disabled={isLoginLoading}
+            stylesSet={gsiButtonStyles}
           />
         </View>
       </View>
@@ -112,14 +132,6 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  kakaoButton: {
-    backgroundColor: '#FEE500',
-  },
-  kakaoButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#3c1e1e',
   },
 });
 

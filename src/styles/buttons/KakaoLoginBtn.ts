@@ -1,11 +1,11 @@
 // src/styles/GsiMaterialButton.ts
 import { StyleSheet } from 'react-native';
 
-export const gsiButtonStyles = StyleSheet.create({
+export const ksiButtonStyles = StyleSheet.create({
     materialButton: {
-        backgroundColor: 'white',
-        borderWidth: 1,
-        borderColor: '#747775',
+        backgroundColor: '#FEE500', // 변경
+        // borderWidth: 1,
+        // borderColor: '#747775',
         paddingHorizontal: 16,
         flexDirection: 'row',
         alignItems: 'center',
@@ -14,7 +14,9 @@ export const gsiButtonStyles = StyleSheet.create({
     },
     buttonIcon: {
         width: 28,
-        height: 28,
+        // height: 28,
+        resizeMode: 'contain',
+        aspectRatio: 1,
         marginRight: 12,
     },
     buttonContentWrapper: {
@@ -23,7 +25,7 @@ export const gsiButtonStyles = StyleSheet.create({
         justifyContent: 'center',
     },
     buttonContents: {
-        color: '#1F1F1F',
+        color: '#000000',   // 변경
         fontSize: 16,
         lineHeight: 20,
         fontWeight: '600',
@@ -33,8 +35,8 @@ export const gsiButtonStyles = StyleSheet.create({
         transform: [{ translateY: -2 }],
     },
     disabled: {
-        backgroundColor: '#ffffff61',
-        borderColor: '#1f1f1f1f',
+        backgroundColor: '#FEE50061',   // 변경
+        // borderColor: '#1f1f1f1f',
     },
     disabledContents: {
         opacity: 0.38,
