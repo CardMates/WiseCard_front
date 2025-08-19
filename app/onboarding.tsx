@@ -4,19 +4,29 @@ import { Image, Pressable, SafeAreaView, StyleSheet, Text, TouchableOpacity, Vie
 import Colors from '../src/styles/colors';
 
 export default function OnboardingScreen() {
+  const [isLoginLoading, setIsLoginLoading] = React.useState(false);
 
-  const GsiMaterialButton = ({ title, icon, onPress }: any) => {
+  const GsiMaterialButton = ({ title, icon, onPress, disabled }: any) => {
     return (
       <Pressable
-        style={({ pressed }) => [
-          styles.button, gsiButtonStyles.gsiMaterialButton,
-          pressed && gsiButtonStyles.activeState,
+        style={[
+          styles.button,
+          gsiButtonStyles.gsiMaterialButton,
+          disabled && gsiButtonStyles.disabled,
         ]}
         onPress={onPress}
+        disabled={disabled}
       >
-        {icon && <Image source={icon} style={gsiButtonStyles.buttonIcon} />}
+        {icon && (
+          <Image
+            source={icon}
+            style={[gsiButtonStyles.buttonIcon, disabled && gsiButtonStyles.disabledIcon]}
+          />
+        )}
         <View style={gsiButtonStyles.buttonContentWrapper}>
-          <Text style={gsiButtonStyles.buttonContents}>{title}</Text>
+          <Text style={[gsiButtonStyles.buttonContents, disabled && gsiButtonStyles.disabledContents]}>
+            {title}
+          </Text>
         </View>
       </Pressable>
     );
@@ -27,9 +37,16 @@ export default function OnboardingScreen() {
     console.log('Kakao login pressed');
   };
 
-  const handleGoogleLogin = () => {
-    // TODO: Implement Google login
-    console.log('Google login pressed');
+  const handleGoogleLogin = async () => {
+    setIsLoginLoading(true);
+    try {
+      // TODO: Implement Google login
+      console.log('Google login pressed');
+      // await yourGoogleLogin();
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    } finally {
+      setIsLoginLoading(false);
+    }
   };
 
   return (
@@ -54,6 +71,7 @@ export default function OnboardingScreen() {
             title="Google 계정으로 로그인"
             icon={require('../assets/images/g-logo.png')}
             onPress={handleGoogleLogin}
+            disabled={isLoginLoading}
           />
         </View>
       </View>
@@ -98,20 +116,10 @@ const styles = StyleSheet.create({
   kakaoButton: {
     backgroundColor: '#FEE500',
   },
-  googleButton: {
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
   kakaoButtonText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#3c1e1e',
-  },
-  googleButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1a1a1a',
   },
 });
 
