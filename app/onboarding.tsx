@@ -3,7 +3,8 @@ import { ksiButtonStyles } from '@/src/styles/buttons/KakaoLoginBtn';
 import { saveToken } from '@/src/utils/authStorage';
 import { router } from 'expo-router';
 import React from 'react';
-import { Alert, Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Colors from '../src/styles/colors';
 
 export default function OnboardingScreen() {
@@ -135,7 +136,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: '500',
     color: Colors.PRIMARY_BLUE,
     marginBottom: 12,
   },
