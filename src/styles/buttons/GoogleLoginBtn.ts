@@ -32,11 +32,6 @@ export const gsiButtonStyles = StyleSheet.create({
         textAlignVertical: 'center',
         transform: [{ translateY: -2 }],
     },
-    buttonState: {
-        ...StyleSheet.absoluteFillObject,
-        opacity: 0,
-        backgroundColor: 'transparent',
-    },
     disabled: {
         backgroundColor: '#ffffff61',
         borderColor: '#1f1f1f1f',
@@ -46,9 +41,5 @@ export const gsiButtonStyles = StyleSheet.create({
     },
     disabledIcon: {
         opacity: 0.38,
-    },
-    activeState: {
-        backgroundColor: '#303030',
-        opacity: 0.12,
     },
 });
