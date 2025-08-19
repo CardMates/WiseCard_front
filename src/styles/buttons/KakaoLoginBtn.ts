@@ -1,4 +1,3 @@
-// src/styles/GsiMaterialButton.ts
 import { StyleSheet } from 'react-native';
 
 export const ksiButtonStyles = StyleSheet.create({
