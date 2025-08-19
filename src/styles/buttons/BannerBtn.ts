@@ -16,6 +16,7 @@ export const BannerButtonStyles = StyleSheet.create({
     buttonIcon: {
         width: 56,
         height: 56,
+        marginLeft: 5,
     },
     buttonContentWrapper: {
         flexDirection: 'row',
