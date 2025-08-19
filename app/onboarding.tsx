@@ -1,11 +1,21 @@
 import { gsiButtonStyles } from '@/src/styles/buttons/GoogleLoginBtn';
 import { ksiButtonStyles } from '@/src/styles/buttons/KakaoLoginBtn';
+import { saveToken } from '@/src/utils/authStorage';
+import { router } from 'expo-router';
 import React from 'react';
-import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import Colors from '../src/styles/colors';
 
 export default function OnboardingScreen() {
   const [isLoginLoading, setIsLoginLoading] = React.useState(false);
+
+  const isMountedRef = React.useRef(true);
+  React.useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    }
+  }, [])
 
   const SocialLoginButton = ({
     title,
@@ -51,9 +61,14 @@ export default function OnboardingScreen() {
       // TODO: Implement Kakao login
       console.log('Kakao login pressed');
       // await yourGoogleLogin();
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await saveToken('kakao');
+      router.replace('/'); // app/index.tsx로 이동
+    } catch (error) {
+      console.error('Kakao login error', error);
+      Alert.alert('로그인 실패', '로그인 중 오류가 발생했습니다. 다시 시도해 주세요.');
     } finally {
-      setIsLoginLoading(false);
+      if (isMountedRef.current) setIsLoginLoading(false);
     }
   };
 
@@ -63,9 +78,14 @@ export default function OnboardingScreen() {
       // TODO: Implement Google login
       console.log('Google login pressed');
       // await yourGoogleLogin();
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await saveToken('google');
+      router.replace('/'); // app/index.tsx로 이동
+    } catch (error) {
+      console.error('Google login error', error);
+      Alert.alert('로그인 실패', '로그인 중 오류가 발생했습니다. 다시 시도해 주세요.');
     } finally {
-      setIsLoginLoading(false);
+      if (isMountedRef.current) setIsLoginLoading(false);
     }
   };
 
