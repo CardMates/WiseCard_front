@@ -93,13 +93,13 @@ export default function Index() {
           <View style={styles.menuContainer}>
             <MenuButton
               icon={require('../assets/images/icons/credit-card.png')}
-              onPress={() => { router.replace('/MyCardsScreen'); }}
+              onPress={() => { router.push('/MyCardsScreen'); }}
               disabled={false}
               stylesSet={MenuButtonStyles}
             />
             <MenuButton
               icon={require('../assets/images/icons/setting.png')}
-              onPress={() => { router.replace('/SettingsScreen'); }}
+              onPress={() => { router.push('/SettingsScreen'); }}
               disabled={false}
               stylesSet={MenuButtonStyles}
             />
@@ -109,14 +109,14 @@ export default function Index() {
           <BannerButton
             title={'온라인\n쇼핑몰'}
             icon={require('../assets/images/online-shopping.png')}
-            onPress={() => { router.replace('/OnlineShopScreen'); }}
+            onPress={() => { router.push('/OnlineShopScreen'); }}
             disabled={false}
             stylesSet={BannerButtonStyles}
           />
           <BannerButton
             title={'기간 한정\n프로모션'}
             icon={require('../assets/images/promotion.png')}
-            onPress={() => { router.replace('/PromotionScreen'); }}
+            onPress={() => { router.push('/PromotionScreen'); }}
             disabled={false}
             stylesSet={BannerButtonStyles}
           />

@@ -25,28 +25,24 @@ export default function RootLayout() {
             name="MyCardsScreen"
             options={{
               headerShown: false,
-              gestureEnabled: false
             }}
           />
           <Stack.Screen
             name="SettingsScreen"
             options={{
               headerShown: false,
-              gestureEnabled: false
             }}
           />
           <Stack.Screen
             name="OnlineShopScreen"
             options={{
               headerShown: false,
-              gestureEnabled: false
             }}
           />
           <Stack.Screen
             name="PromotionScreen"
             options={{
               headerShown: false,
-              gestureEnabled: false
             }}
           />
         </Stack>
