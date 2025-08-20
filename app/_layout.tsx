@@ -8,7 +8,7 @@ export default function RootLayout() {
       <AuthGuard>
         <Stack>
           <Stack.Screen
-            name="onboarding"
+            name="OnboardingScreen"
             options={{
               headerShown: false,
               gestureEnabled: false

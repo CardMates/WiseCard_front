@@ -12,7 +12,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.replace('/onboarding');
+      router.replace('/OnboardingScreen');
     }
   }, [isAuthenticated, isLoading]);
 
