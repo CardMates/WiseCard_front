@@ -1,6 +1,7 @@
 import { BannerButtonStyles } from "@/src/styles/buttons/BannerBtn";
 import { MenuButtonStyles } from "@/src/styles/buttons/MenuBtn";
 import Colors from "@/src/styles/colors";
+import { router } from "expo-router";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -92,13 +93,13 @@ export default function Index() {
           <View style={styles.menuContainer}>
             <MenuButton
               icon={require('../assets/images/icons/credit-card.png')}
-              onPress={handleSmt}
+              onPress={() => { router.replace('/MyCardsScreen'); }}
               disabled={false}
               stylesSet={MenuButtonStyles}
             />
             <MenuButton
               icon={require('../assets/images/icons/setting.png')}
-              onPress={handleSmt}
+              onPress={() => { router.replace('/SettingsScreen'); }}
               disabled={false}
               stylesSet={MenuButtonStyles}
             />
@@ -108,14 +109,14 @@ export default function Index() {
           <BannerButton
             title={'온라인\n쇼핑몰'}
             icon={require('../assets/images/online-shopping.png')}
-            onPress={handleSmt}
+            onPress={() => { router.replace('/OnlineShopScreen'); }}
             disabled={false}
             stylesSet={BannerButtonStyles}
           />
           <BannerButton
             title={'기간 한정\n프로모션'}
             icon={require('../assets/images/promotion.png')}
-            onPress={handleSmt}
+            onPress={() => { router.replace('/PromotionScreen'); }}
             disabled={false}
             stylesSet={BannerButtonStyles}
           />

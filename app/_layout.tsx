@@ -21,6 +21,34 @@ export default function RootLayout() {
               gestureEnabled: false
             }}
           />
+          <Stack.Screen
+            name="MyCardsScreen"
+            options={{
+              headerShown: false,
+              gestureEnabled: false
+            }}
+          />
+          <Stack.Screen
+            name="SettingsScreen"
+            options={{
+              headerShown: false,
+              gestureEnabled: false
+            }}
+          />
+          <Stack.Screen
+            name="OnlineShopScreen"
+            options={{
+              headerShown: false,
+              gestureEnabled: false
+            }}
+          />
+          <Stack.Screen
+            name="PromotionScreen"
+            options={{
+              headerShown: false,
+              gestureEnabled: false
+            }}
+          />
         </Stack>
       </AuthGuard>
     </AuthProvider>
