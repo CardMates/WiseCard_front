@@ -4,6 +4,7 @@ import Colors from "@/src/styles/colors";
 import { router } from "expo-router";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import KakaoMapView from "./components/KakaoMapView";
 
 export default function Index() {
   const username = '배윤아';
@@ -82,9 +83,8 @@ export default function Index() {
   };
 
   return (
-
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+      <View style={styles.header}>
         <View style={styles.userHeader}>
           <View style={styles.greetingContainer}>
             <Text style={styles.greetingText}>안녕하세요,</Text>
@@ -122,6 +122,7 @@ export default function Index() {
           />
         </View>
       </View>
+      <KakaoMapView />
     </SafeAreaView >
   );
 }
@@ -131,8 +132,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
   },
-  content: {
-    flex: 1,
+  header: {
+    //flex: 1,
     // justifyContent: 'center',
     paddingHorizontal: 30,
   },
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', // 왼쪽: 텍스트, 오른쪽: 버튼 묶음
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 16,
   },
   greetingContainer: {
     flexDirection: 'column',     // 인사말은 세로 배치
@@ -162,7 +163,8 @@ const styles = StyleSheet.create({
   bannerContainer: {
     flexDirection: 'row',
     gap: 12,
-    flex: 1,
+    paddingBottom: 16,
+    //flex: 1,
   }
 })
 

@@ -11,7 +11,6 @@ export const BannerButtonStyles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        height: 88,
     },
     buttonIcon: {
         width: 56,
