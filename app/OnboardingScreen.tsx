@@ -60,13 +60,13 @@ export default function OnboardingScreen() {
     setIsLoginLoading(true);
     try {
       // TODO: Implement Kakao login
-      console.log('Kakao login pressed');
+      console.log('👤 Kakao login pressed');
       // await yourGoogleLogin();
       await new Promise(resolve => setTimeout(resolve, 2000));
       await saveToken('kakao');
       router.replace('/'); // app/index.tsx로 이동
     } catch (error) {
-      console.error('Kakao login error', error);
+      console.error('❌ Kakao login error', error);
       Alert.alert('로그인 실패', '로그인 중 오류가 발생했습니다. 다시 시도해 주세요.');
     } finally {
       if (isMountedRef.current) setIsLoginLoading(false);
@@ -77,13 +77,13 @@ export default function OnboardingScreen() {
     setIsLoginLoading(true);
     try {
       // TODO: Implement Google login
-      console.log('Google login pressed');
+      console.log('👤 Google login pressed');
       // await yourGoogleLogin();
       await new Promise(resolve => setTimeout(resolve, 2000));
       await saveToken('google');
       router.replace('/'); // app/index.tsx로 이동
     } catch (error) {
-      console.error('Google login error', error);
+      console.error('❌ Google login error', error);
       Alert.alert('로그인 실패', '로그인 중 오류가 발생했습니다. 다시 시도해 주세요.');
     } finally {
       if (isMountedRef.current) setIsLoginLoading(false);
