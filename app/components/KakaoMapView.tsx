@@ -1,7 +1,7 @@
 import useLocaiton from '@/src/hooks/useLocation';
 import { MenuButtonStyles } from '@/src/styles/buttons/MenuBtn';
 import * as Location from 'expo-location';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { MenuButton } from './Button';
@@ -11,11 +11,14 @@ export default function KakaoMapView() {
   const kakaoApiKey = process.env.EXPO_PUBLIC_KAKAO_JAVASCRIPT_KEY
   const location = useLocaiton();
   const webViewRef = useRef<WebView>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   if (!location) return <Loading />;
 
   // 현재 위치 가져오기 로직
   const handleRefreshLocation = async () => {
+    if (isRefreshing) return;
+    setIsRefreshing(true);
     try {
       // 1) 즉시: 마지막으로 알고 있는 위치가 있으면 먼저 반영해 체감 속도 향상
       const lastKnown = await Location.getLastKnownPositionAsync();
@@ -48,6 +51,8 @@ export default function KakaoMapView() {
       webViewRef.current?.injectJavaScript(`moveToCurrentLocation(${latitude}, ${longitude}); true;`);
     } catch (error) {
       console.warn('Failed to refresh precise location, kept last known if any.', error);
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -113,7 +118,7 @@ export default function KakaoMapView() {
         <MenuButton
           icon={require('../../assets/images/icons/crosshairs.png')}
           onPress={handleRefreshLocation}
-          disabled={false}
+          disabled={isRefreshing}
           stylesSet={MenuButtonStyles}
         />
       </View>
