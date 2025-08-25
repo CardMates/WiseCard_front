@@ -5,13 +5,14 @@ import React, { useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { MenuButton } from './Button';
+import Loading from './Loading';
 
 export default function KakaoMapView() {
   const kakaoApiKey = process.env.EXPO_PUBLIC_KAKAO_JAVASCRIPT_KEY
   const location = useLocaiton();
   const webViewRef = useRef<WebView>(null);
 
-  if (!location) return null;
+  if (!location) return <Loading />;
 
   // 현재 위치 가져오기 로직
   const handleRefreshLocation = async () => {
@@ -102,6 +103,8 @@ export default function KakaoMapView() {
         style={styles.webview}
         javaScriptEnabled={true}
         originWhitelist={['*']}
+        startInLoadingState={true}
+        renderLoading={() => <Loading />}
         onMessage={onMessage}
       />
 
