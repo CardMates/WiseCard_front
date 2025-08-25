@@ -2,79 +2,13 @@ import { BannerButtonStyles } from "@/src/styles/buttons/BannerBtn";
 import { MenuButtonStyles } from "@/src/styles/buttons/MenuBtn";
 import Colors from "@/src/styles/colors";
 import { router } from "expo-router";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { BannerButton, MenuButton } from "./components/Button";
 import KakaoMapView from "./components/KakaoMapView";
 
 export default function Index() {
   const username = '배윤아';
-
-  const MenuButton = ({
-    icon,
-    onPress,
-    disabled,
-    stylesSet
-  }: {
-    icon: any;
-    onPress: () => void;
-    disabled?: boolean;
-    stylesSet: any;
-  }) => {
-    return (
-      <Pressable
-        style={[
-          stylesSet.materialButton,
-          //disabled && stylesSet.disabled,
-        ]}
-        onPress={onPress}
-        disabled={disabled}
-      >
-        {icon && (
-          <Image
-            source={icon}
-            style={[stylesSet.buttonIcon, /*disabled && stylesSet.disabledIcon*/]}
-          />
-        )}
-      </Pressable>
-    );
-  }
-
-  const BannerButton = ({
-    title,
-    icon,
-    onPress,
-    disabled,
-    stylesSet
-  }: {
-    title: string;
-    icon: any;
-    onPress: () => void;
-    disabled?: boolean;
-    stylesSet: any;
-  }) => {
-    return (
-      <Pressable
-        style={[
-          stylesSet.materialButton,
-          // disabled && stylesSet.disabled,
-        ]}
-        onPress={onPress}
-        disabled={disabled}
-      >
-        <View style={stylesSet.buttonContentWrapper}>
-          <Text style={[stylesSet.buttonContents, disabled && stylesSet.disabledContents]}>
-            {title}
-          </Text>
-        </View>
-        {icon && (
-          <Image
-            source={icon}
-            style={[stylesSet.buttonIcon, disabled && stylesSet.disabledIcon]}
-          />
-        )}
-      </Pressable>
-    );
-  }
 
   return (
     <SafeAreaView style={styles.container}>
