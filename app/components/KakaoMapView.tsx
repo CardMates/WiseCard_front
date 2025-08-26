@@ -6,6 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { MenuButton } from './Button';
 import Loading from './Loading';
+import SearchBar from './SearchBar';
 
 export default function KakaoMapView() {
   const kakaoApiKey = process.env.EXPO_PUBLIC_KAKAO_JAVASCRIPT_KEY
@@ -13,7 +14,36 @@ export default function KakaoMapView() {
   const webViewRef = useRef<WebView>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
   if (!location) return <Loading />;
+
+  // 검색어 입력 핸들러
+  const handleSearchChange = (text: string) => {
+    setSearchQuery(text);
+  };
+
+  // 카테고리 선택 핸들러
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+  };
+
+  // 백엔드 요청 함수
+  const fetchResults = async () => {
+    const data = {
+      query: searchQuery,
+      category: selectedCategory,
+    }
+    try {
+      /*
+      const response = await axios.post('https://your-backend.com/api/search', data);
+      */
+      console.log(data);
+    } catch (error) {
+      console.error('검색 요청 실패:', error);
+    }
+  };
 
   // 현재 위치 가져오기 로직
   const handleRefreshLocation = async () => {
@@ -113,7 +143,14 @@ export default function KakaoMapView() {
         onMessage={onMessage}
       />
 
-      {/* 오버레이 버튼들 */}
+      {/* 오버레이 */}
+      <View style={styles.filterContainer}>
+        <SearchBar
+          value={searchQuery}
+          onChangeText={handleSearchChange}
+          onSubmitEditing={fetchResults} // 엔터/완료 누르면 실행
+        />
+      </View>
       <View style={styles.buttonContainer}>
         <MenuButton
           icon={require('../../assets/images/icons/crosshairs.png')}
@@ -133,6 +170,13 @@ const styles = StyleSheet.create({
   webview: {
     flex: 1,
   },
+  filterContainer: {
+    position: 'absolute',
+    padding: 10,
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '100%'
+  },
   buttonContainer: {
     position: 'absolute',
     bottom: 30,
@@ -140,16 +184,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-  },
-  locationButton: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 25,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   },
 });
