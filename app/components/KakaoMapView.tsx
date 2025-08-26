@@ -1,10 +1,11 @@
 import useLocaiton from '@/src/hooks/useLocation';
+import { CategoryButtonStyles } from '@/src/styles/buttons/CategoryBtn';
 import { MenuButtonStyles } from '@/src/styles/buttons/MenuBtn';
 import * as Location from 'expo-location';
 import React, { useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
-import { MenuButton } from './Button';
+import { CategoryButton, MenuButton } from './Button';
 import Loading from './Loading';
 import SearchBar from './SearchBar';
 
@@ -16,6 +17,15 @@ export default function KakaoMapView() {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  // 카테고리 배열
+  const categories = [
+    { label: '카페', value: 'cafe', icon: require('../../assets/images/icons/coffee.png') },
+    { label: '식당', value: 'restaurant', icon: require('../../assets/images/icons/pizza-slice.png') },
+    { label: '극장', value: 'theater', icon: require('../../assets/images/icons/clapper-board.png') },
+    { label: '마트', value: 'mart', icon: require('../../assets/images/icons/shopping-cart.png') },
+    { label: '마트', value: 'mart2', icon: require('../../assets/images/icons/shopping-cart.png') },
+  ];
 
   if (!location) return <Loading />;
 
@@ -150,6 +160,21 @@ export default function KakaoMapView() {
           onChangeText={handleSearchChange}
           onSubmitEditing={fetchResults} // 엔터/완료 누르면 실행
         />
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoryContainer}
+        >
+          {categories.map((category) => (
+            <CategoryButton
+              icon={category.icon}
+              key={category.value} // 예: cafe
+              title={category.label} // 예: 카페
+              onPress={() => handleCategorySelect(category.value)}
+              stylesSet={CategoryButtonStyles}
+            />
+          ))}
+        </ScrollView>
       </View>
       <View style={styles.buttonContainer}>
         <MenuButton
@@ -175,7 +200,13 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: 'column',
     alignItems: 'center',
-    width: '100%'
+    width: '100%',
+    gap: 5,
+  },
+  categoryContainer: {
+    flexDirection: 'row',
+    padding: 3,
+    gap: 5,
   },
   buttonContainer: {
     position: 'absolute',

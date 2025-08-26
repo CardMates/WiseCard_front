@@ -67,3 +67,40 @@ export const BannerButton = ({
         </Pressable>
     );
 }
+
+export const CategoryButton = ({
+    icon,
+    title,  // 예: 카페
+    onPress,
+    disabled,
+    stylesSet
+}: {
+    icon: any;
+    title: string;
+    onPress: () => void;
+    disabled?: boolean;
+    stylesSet: any;
+}) => {
+    return (
+        <Pressable
+            style={[
+                stylesSet.materialButton,
+                //disabled && stylesSet.disabled,
+            ]}
+            onPress={onPress}
+            disabled={disabled}
+        >
+            {icon && (
+                <Image
+                    source={icon}
+                    style={[stylesSet.buttonIcon, /*disabled && stylesSet.disabledIcon*/]}
+                />
+            )}
+            <View style={stylesSet.buttonContentWrapper}>
+                <Text style={[stylesSet.buttonContents, /*disabled && stylesSet.disabledContents*/]}>
+                    {title}
+                </Text>
+            </View>
+        </Pressable>
+    );
+}
