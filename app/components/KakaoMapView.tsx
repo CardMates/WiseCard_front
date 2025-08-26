@@ -2,7 +2,7 @@ import useLocaiton from '@/src/hooks/useLocation';
 import { CategoryButtonStyles } from '@/src/styles/buttons/CategoryBtn';
 import { MenuButtonStyles } from '@/src/styles/buttons/MenuBtn';
 import * as Location from 'expo-location';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { CategoryButton, MenuButton } from './Button';
@@ -27,8 +27,6 @@ export default function KakaoMapView() {
     { label: '마트', value: 'mart2', icon: require('../../assets/images/icons/shopping-cart.png') },
   ];
 
-  if (!location) return <Loading />;
-
   // 검색어 입력 핸들러
   const handleSearchChange = (text: string) => {
     setSearchQuery(text);
@@ -36,7 +34,12 @@ export default function KakaoMapView() {
 
   // 카테고리 선택 핸들러
   const handleCategorySelect = (category: string) => {
-    setSelectedCategory(category);
+    // 토글 선택: 같은 카테고리 클릭 시 선택 해제
+    if (selectedCategory === category) {
+      setSelectedCategory(null);
+    } else {
+      setSelectedCategory(category);
+    }
   };
 
   // 백엔드 요청 함수
@@ -101,43 +104,50 @@ export default function KakaoMapView() {
     console.log('WebView에서 받은 메시지:', data)
   };
 
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-        <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoApiKey}&autoload=false"></script>
-      </head>
-      <body style="margin:0; padding:0;">
-        <div id="map" style="width:100%; height:100vh;"></div>
-        <script>
-        // SDK 로드 후 지도 초기화
-          kakao.maps.load(function() {
-            var map;
-            var marker;
+  useEffect(() => {
+    fetchResults();
+  }, [selectedCategory]);
 
-            function initMap(lat, lng) {
-              map = new kakao.maps.Map(document.getElementById('map'), {
-                center: new kakao.maps.LatLng(lat, lng),
-                level: 3
-              });
-              marker = new kakao.maps.Marker({
-                position: new kakao.maps.LatLng(lat, lng)
-              });
-              marker.setMap(map);
-            } 
-            initMap(${location.lat}, ${location.lng})
-          
-            // 지도 센터만 현재 위치로 이동시키는 함수
-            window.moveToCurrentLocation = function(lat, lng) {
-              if (!map) return;
-              map.setCenter(new kakao.maps.LatLng(lat, lng));
-            }
-          });
-        </script>
-      </body>
-    </html>
-  `;
+  // Early return after all hooks are called
+  if (!location) return <Loading />;
+
+  const html = `
+     <!DOCTYPE html>
+     <html>
+       <head>
+         <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+         <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoApiKey}&autoload=false"></script>
+       </head>
+       <body style="margin:0; padding:0;">
+         <div id="map" style="width:100%; height:100vh;"></div>
+         <script>
+         // SDK 로드 후 지도 초기화
+           kakao.maps.load(function() {
+             var map;
+             var marker;
+
+             function initMap(lat, lng) {
+               map = new kakao.maps.Map(document.getElementById('map'), {
+                 center: new kakao.maps.LatLng(lat, lng),
+                 level: 3
+               });
+               marker = new kakao.maps.Marker({
+                 position: new kakao.maps.LatLng(lat, lng)
+               });
+               marker.setMap(map);
+             } 
+             initMap(${location.lat}, ${location.lng})
+           
+             // 지도 센터만 현재 위치로 이동시키는 함수
+             window.moveToCurrentLocation = function(lat, lng) {
+               if (!map) return;
+               map.setCenter(new kakao.maps.LatLng(lat, lng));
+             }
+           });
+         </script>
+       </body>
+     </html>
+   `;
 
   return (
     <View style={styles.container}>
@@ -171,6 +181,7 @@ export default function KakaoMapView() {
               key={category.value} // 예: cafe
               title={category.label} // 예: 카페
               onPress={() => handleCategorySelect(category.value)}
+              selected={selectedCategory === category.value}
               stylesSet={CategoryButtonStyles}
             />
           ))}

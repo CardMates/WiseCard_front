@@ -31,14 +31,13 @@ export const CategoryButtonStyles = StyleSheet.create({
         textAlignVertical: 'center',
         transform: [{ translateY: -2 }],
     },
-    disabled: {
-        backgroundColor: '#ffffff61',
-        borderColor: '#1f1f1f1f',
+    selected: {
+        backgroundColor: Colors.ACCENT_BLUE,
     },
-    disabledContents: {
-        opacity: 0.38,
+    selectedContents: {
+        color: 'white'
     },
-    disabledIcon: {
-        opacity: 0.38,
+    selectedIcon: {
+        tintColor: 'white'
     },
 });

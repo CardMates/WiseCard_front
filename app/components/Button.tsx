@@ -73,19 +73,21 @@ export const CategoryButton = ({
     title,  // 예: 카페
     onPress,
     disabled,
+    selected,
     stylesSet
 }: {
     icon: any;
     title: string;
     onPress: () => void;
     disabled?: boolean;
+    selected?: boolean;
     stylesSet: any;
 }) => {
     return (
         <Pressable
             style={[
                 stylesSet.materialButton,
-                //disabled && stylesSet.disabled,
+                selected && stylesSet.selected,
             ]}
             onPress={onPress}
             disabled={disabled}
@@ -93,11 +95,18 @@ export const CategoryButton = ({
             {icon && (
                 <Image
                     source={icon}
-                    style={[stylesSet.buttonIcon, /*disabled && stylesSet.disabledIcon*/]}
+                    style={[
+                        stylesSet.buttonIcon,
+                        selected && stylesSet.selectedIcon
+                    ]}
                 />
             )}
             <View style={stylesSet.buttonContentWrapper}>
-                <Text style={[stylesSet.buttonContents, /*disabled && stylesSet.disabledContents*/]}>
+                <Text style={[
+                    stylesSet.buttonContents,
+                    selected && stylesSet.selectedContents,
+                ]}
+                >
                     {title}
                 </Text>
             </View>
