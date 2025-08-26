@@ -8,8 +8,12 @@ interface SearchBarProps {
     onSubmitEditing: () => void;
 }
 
-export default function SearchBar(
-    { value, onChangeText, placeholder = '지역, 매장명으로 검색 (예: ‘강남’, ‘올리브영’)', onSubmitEditing }: SearchBarProps
+export default function SearchBar({
+    value,
+    onChangeText,
+    placeholder = '지역, 매장명으로 검색 (예: ‘강남’, ‘올리브영’)',
+    onSubmitEditing
+}: SearchBarProps
 ) {
     return (
         <View style={styles.container}>
