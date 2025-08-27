@@ -31,7 +31,6 @@ export const ksiButtonStyles = StyleSheet.create({
         overflow: 'hidden',
         includeFontPadding: false, // Android에서 불필요한 여백 제거
         textAlignVertical: 'center',
-        transform: [{ translateY: -2 }],
     },
     disabled: {
         backgroundColor: '#FEE50061',   // 변경
