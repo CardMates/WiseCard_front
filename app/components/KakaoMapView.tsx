@@ -10,13 +10,16 @@ import Loading from './Loading';
 import SearchBar from './SearchBar';
 
 export default function KakaoMapView() {
-  const kakaoApiKey = process.env.EXPO_PUBLIC_KAKAO_JAVASCRIPT_KEY
+  const kakaoMapWeb = process.env.EXPO_PUBLIC_KAKAO_MAP_WEB
   const location = useLocaiton();
   const webViewRef = useRef<WebView>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const [pageReady, setPageReady] = useState(false);
+  const initialUrl = `${kakaoMapWeb}?lat=${location?.lat}&lng=${location?.lng}&v=${Date.now()}`;
 
   // 카테고리 배열
   const categories = [
@@ -60,7 +63,7 @@ export default function KakaoMapView() {
 
   // 현재 위치 가져오기 로직
   const handleRefreshLocation = async () => {
-    if (isRefreshing) return;
+    if (isRefreshing || !pageReady) return;
     setIsRefreshing(true);
     try {
       // 1) 즉시: 마지막으로 알고 있는 위치가 있으면 먼저 반영해 체감 속도 향상
@@ -100,7 +103,9 @@ export default function KakaoMapView() {
   };
 
   const onMessage = (event: any) => {
-    const data = event.nativeEvent.data;
+    const data = String(event.nativeEvent.data);
+    if (data === 'READY') setPageReady(true);
+
     console.log('WebView에서 받은 메시지:', data)
   };
 
@@ -111,50 +116,12 @@ export default function KakaoMapView() {
   // Early return after all hooks are called
   if (!location) return <Loading />;
 
-  const html = `
-     <!DOCTYPE html>
-     <html>
-       <head>
-         <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-         <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoApiKey}&autoload=false"></script>
-       </head>
-       <body style="margin:0; padding:0;">
-         <div id="map" style="width:100%; height:100vh;"></div>
-         <script>
-         // SDK 로드 후 지도 초기화
-           kakao.maps.load(function() {
-             var map;
-             var marker;
-
-             function initMap(lat, lng) {
-               map = new kakao.maps.Map(document.getElementById('map'), {
-                 center: new kakao.maps.LatLng(lat, lng),
-                 level: 3
-               });
-               marker = new kakao.maps.Marker({
-                 position: new kakao.maps.LatLng(lat, lng)
-               });
-               marker.setMap(map);
-             } 
-             initMap(${location.lat}, ${location.lng})
-           
-             // 지도 센터만 현재 위치로 이동시키는 함수
-             window.moveToCurrentLocation = function(lat, lng) {
-               if (!map) return;
-               map.setCenter(new kakao.maps.LatLng(lat, lng));
-             }
-           });
-         </script>
-       </body>
-     </html>
-   `;
-
   return (
     <View style={styles.container}>
       {/* WebView */}
       <WebView
         ref={webViewRef}
-        source={{ html }}
+        source={{ uri: initialUrl }}
         style={styles.webview}
         javaScriptEnabled={true}
         originWhitelist={['*']}
