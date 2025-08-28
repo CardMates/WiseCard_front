@@ -1,3 +1,4 @@
+import { categories } from '@/src/constants/categories';
 import useLocaiton from '@/src/hooks/useLocation';
 import { CategoryButtonStyles } from '@/src/styles/buttons/CategoryBtn';
 import { MenuButtonStyles } from '@/src/styles/buttons/MenuBtn';
@@ -20,15 +21,6 @@ export default function KakaoMapView() {
 
   const [pageReady, setPageReady] = useState(false);
   const initialUrl = `${kakaoMapWeb}?lat=${location?.lat}&lng=${location?.lng}&v=${Date.now()}`;
-
-  // 카테고리 배열
-  const categories = [
-    { label: '카페', value: 'cafe', icon: require('../../assets/images/icons/coffee.png') },
-    { label: '식당', value: 'restaurant', icon: require('../../assets/images/icons/pizza-slice.png') },
-    { label: '극장', value: 'theater', icon: require('../../assets/images/icons/clapper-board.png') },
-    { label: '마트', value: 'mart', icon: require('../../assets/images/icons/shopping-cart.png') },
-    { label: '마트', value: 'mart2', icon: require('../../assets/images/icons/shopping-cart.png') },
-  ];
 
   // 검색어 입력 핸들러
   const handleSearchChange = (text: string) => {
