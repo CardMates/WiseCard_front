@@ -1,29 +1,92 @@
+import { BackButtonStyles } from '@/src/styles/buttons/BackBtn';
+import Colors from '@/src/styles/colors';
+import { router } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { MenuButton } from './components/Button';
+import StoreBlock from './components/StoreBlock';
 
 export default function OnlineShopScreen() {
+  const onlineShopList = [
+    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+  ]
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Online Shop</Text>
-      <Text style={styles.subtitle}>Browse and shop online</Text>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <MenuButton
+          icon={require('../assets/images/icons/angle-left-b.png')}
+          onPress={() => router.back()}
+          disabled={false}
+          stylesSet={BackButtonStyles}
+        />
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>온라인 쇼핑몰</Text>
+          <Text style={styles.subtitle}>내 카드로 혜택을 누릴 수 있는 온라인 쇼핑몰은?</Text>
+        </View>
+      </View>
+      <View>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.shopContainer}
+        >
+          {onlineShopList.map((shop, i) => (
+            <StoreBlock
+              key={i}
+              store={shop}
+              onPress={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+            //stylesSet={undefined}
+            />
+          ))}
+        </ScrollView>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: 'white',
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
+    paddingHorizontal: 30,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+  },
+  header: {
+    paddingVertical: 20,
+    gap: 15,
+  },
+  titleContainer: {
+    // paddingVertical: 10,
   },
   title: {
+    color: Colors.PRIMARY_BLUE,
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   subtitle: {
     fontSize: 16,
     color: '#666',
   },
+  shopContainer: {
+    gap: 5,
+  }
 });
