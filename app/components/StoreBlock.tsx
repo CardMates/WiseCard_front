@@ -1,5 +1,5 @@
 import Colors from "@/src/styles/colors";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text } from "react-native";
 
 export default function StoreBlock({
     store,
@@ -11,10 +11,10 @@ export default function StoreBlock({
     //stylesSet: any;
 }) {
     return (
-        <View style={styles.container}>
+        <Pressable onPress={onPress} style={styles.container}>
             <Text style={styles.storeName}>{store.name}</Text>
             <Text style={styles.storeInfo}>{store.info}</Text>
-        </View>
+        </Pressable>
     );
 }
 

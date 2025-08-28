@@ -9,21 +9,21 @@ import StoreBlock from './components/StoreBlock';
 
 export default function OnlineShopScreen() {
   const onlineShopList = [
-    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
-    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
-    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
-    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
-    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
-    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
-    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
-    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
-    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
-    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
-    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
-    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
-    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
-    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
-    { name: '올리브영', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영1', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영2', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영3', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영4', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영5', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영6', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영7', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영8', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영9', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영10', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영11', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영12', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영13', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영14', info: 'XX카드 사용 시 30% 할인' },
+    { name: '올리브영15', info: 'XX카드 사용 시 30% 할인' },
   ]
 
   return (
@@ -49,9 +49,11 @@ export default function OnlineShopScreen() {
             <StoreBlock
               key={i}
               store={shop}
-              onPress={function (): void {
-                throw new Error('Function not implemented.');
-              }}
+              onPress={() => router.push({
+                pathname: '/StoreDetailScreen',
+                params: { name: shop.name, info: shop.info }
+                // 추후 파라미터 수정
+              })}
             //stylesSet={undefined}
             />
           ))}

@@ -150,3 +150,29 @@ export const CategoryButton = ({
         </Pressable>
     );
 }
+
+export const ActionButton = ({
+    title,
+    onPress,
+    added,
+    stylesSet
+}: {
+    title: string;
+    onPress: () => void;
+    added?: boolean;
+    stylesSet: any; // gsiButtonStyles | ksiButtonStyles
+}) => {
+    return (
+        <Pressable
+            style={[
+                stylesSet.materialButton,
+                added && stylesSet.added,
+            ]}
+            onPress={onPress}
+        >
+            <Text style={[stylesSet.buttonContents, added && stylesSet.addedContents]}>
+                {title}
+            </Text>
+        </Pressable>
+    );
+}

@@ -79,6 +79,12 @@ export default function RootLayout() {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="StoreDetailScreen"
+            options={{
+              headerShown: false,
+            }}
+          />
         </Stack>
       </AuthGuard>
     </AuthProvider>
