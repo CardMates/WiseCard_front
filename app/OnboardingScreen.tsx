@@ -3,9 +3,10 @@ import { ksiButtonStyles } from '@/src/styles/buttons/KakaoLoginBtn';
 import { saveToken } from '@/src/utils/authStorage';
 import { router } from 'expo-router';
 import React from 'react';
-import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Colors from '../src/styles/colors';
+import { SocialLoginButton } from './components/Button';
 
 export default function OnboardingScreen() {
   const [isLoginLoading, setIsLoginLoading] = React.useState(false);
@@ -17,44 +18,6 @@ export default function OnboardingScreen() {
       isMountedRef.current = false;
     }
   }, [])
-
-  const SocialLoginButton = ({
-    title,
-    icon,
-    onPress,
-    disabled,
-    stylesSet
-  }: {
-    title: string;
-    icon: any;
-    onPress: () => void;
-    disabled?: boolean;
-    stylesSet: any; // gsiButtonStyles | ksiButtonStyles
-  }) => {
-    return (
-      <Pressable
-        style={[
-          styles.button,
-          stylesSet.materialButton,
-          disabled && stylesSet.disabled,
-        ]}
-        onPress={onPress}
-        disabled={disabled}
-      >
-        {icon && (
-          <Image
-            source={icon}
-            style={[stylesSet.buttonIcon, disabled && stylesSet.disabledIcon]}
-          />
-        )}
-        <View style={stylesSet.buttonContentWrapper}>
-          <Text style={[stylesSet.buttonContents, disabled && stylesSet.disabledContents]}>
-            {title}
-          </Text>
-        </View>
-      </Pressable>
-    );
-  }
 
   const handleKakaoLogin = async () => {
     setIsLoginLoading(true);
@@ -147,12 +110,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     gap: 16,
-  },
-  button: {
-    height: 56,
-    borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 

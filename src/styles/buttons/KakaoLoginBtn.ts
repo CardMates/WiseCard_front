@@ -10,6 +10,9 @@ export const ksiButtonStyles = StyleSheet.create({
         alignItems: 'center',
         maxWidth: 400,
         minWidth: 64,
+        height: 56,
+        borderRadius: 28,
+        justifyContent: 'center',
     },
     buttonIcon: {
         width: 28,
