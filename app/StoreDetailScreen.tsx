@@ -61,16 +61,18 @@ export default function StoreDetailScreen() {
                         </View>
                     </View>
                 ))}
-                <ActionButton
-                    title={'자주 가는 매장 등록'}   
-                    // 사용자 계정에 저장되지 않은 매장일 경우: '자주 가는 매장 등록'
-                    // 사용자 계정에 저장된 매장일 경우: '자주 가는 매장에서 삭제'
-                    onPress={function (): void {
-                        throw new Error('Function not implemented.');
-                    }}
-                    added={true}    // 사용자 계정에 저장된 매장인지 여부
-                    stylesSet={StoreActionButtonStyles}
-                />
+                <View style={{ paddingVertical: 30 }}>
+                    <ActionButton
+                        title={'자주 가는 매장 등록'}
+                        // 사용자 계정에 저장되지 않은 매장일 경우: '자주 가는 매장 등록'
+                        // 사용자 계정에 저장된 매장일 경우: '자주 가는 매장에서 삭제'
+                        onPress={function (): void {
+                            throw new Error('Function not implemented.');
+                        }}
+                        added={true}    // 사용자 계정에 저장된 매장인지 여부
+                        stylesSet={StoreActionButtonStyles}
+                    />
+                </View>
             </ScrollView>
         </SafeAreaView>
     );
