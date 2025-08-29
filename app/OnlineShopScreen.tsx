@@ -127,5 +127,6 @@ const styles = StyleSheet.create({
   },
   shopContainer: {
     gap: 5,
+    paddingBottom: 60,
   }
 });
