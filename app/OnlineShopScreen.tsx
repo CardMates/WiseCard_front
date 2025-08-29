@@ -1,13 +1,17 @@
+import { categories } from '@/src/constants/categories';
 import { BackButtonStyles } from '@/src/styles/buttons/BackBtn';
+import { CategoryButtonStyles } from '@/src/styles/buttons/CategoryBtn';
 import Colors from '@/src/styles/colors';
 import { router } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MenuButton } from './components/Button';
+import { CategoryButton, MenuButton } from './components/Button';
 import StoreBlock from './components/StoreBlock';
 
 export default function OnlineShopScreen() {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
   const onlineShopList = [
     { name: '올리브영1', info: 'XX카드 사용 시 30% 할인' },
     { name: '올리브영2', info: 'XX카드 사용 시 30% 할인' },
@@ -26,6 +30,16 @@ export default function OnlineShopScreen() {
     { name: '올리브영15', info: 'XX카드 사용 시 30% 할인' },
   ]
 
+  // 카테고리 선택 핸들러
+  const handleCategorySelect = (category: string) => {
+    // 토글 선택: 같은 카테고리 클릭 시 선택 해제
+    if (selectedCategory === category) {
+      setSelectedCategory(null);
+    } else {
+      setSelectedCategory(category);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -42,23 +56,40 @@ export default function OnlineShopScreen() {
       </View>
       <View>
         <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.shopContainer}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoryContainer}
         >
-          {onlineShopList.map((shop, i) => (
-            <StoreBlock
-              key={i}
-              store={shop}
-              onPress={() => router.push({
-                pathname: '/StoreDetailScreen',
-                params: { name: shop.name, info: shop.info }
-                // 추후 파라미터 수정
-              })}
-            //stylesSet={undefined}
+          {categories.map((category) => (
+            <CategoryButton
+              icon={category.icon}
+              key={category.value} // 예: cafe
+              title={category.label} // 예: 카페
+              onPress={() => handleCategorySelect(category.value)}
+              selected={selectedCategory === category.value}
+              stylesSet={CategoryButtonStyles}
             />
           ))}
         </ScrollView>
       </View>
+      <ScrollView
+        style={{ flex: 1 }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.shopContainer}
+      >
+        {onlineShopList.map((shop, i) => (
+          <StoreBlock
+            key={i}
+            store={shop}
+            onPress={() => router.push({
+              pathname: '/StoreDetailScreen',
+              params: { name: shop.name, info: shop.info }
+              // 추후 파라미터 수정
+            })}
+          //stylesSet={undefined}
+          />
+        ))}
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -87,6 +118,12 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     color: '#666',
+  },
+  categoryContainer: {
+    //flexDirection: 'row',
+    paddingHorizontal: 3,
+    paddingBottom: 15,
+    gap: 5,
   },
   shopContainer: {
     gap: 5,
