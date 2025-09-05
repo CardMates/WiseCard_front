@@ -1,3 +1,5 @@
+import { removeToken } from '@/src/utils/authStorage';
+import { router } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -6,6 +8,7 @@ export default function SettingsScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Settings</Text>
       <Text style={styles.subtitle}>Configure your preferences</Text>
+      <Text style={styles.subtitle} onPress={() => { removeToken(); router.replace('/OnboardingScreen') }}>log out</Text>
     </View>
   );
 }
