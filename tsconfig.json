@@ -4,6 +4,8 @@
     "strict": true,
     "skipLibCheck": true,
     "types": ["react", "react-native", "node"],
+    "allowJs": true,
+    "checkJs": false,
     "paths": {
       "@/*": [
         "./*"
@@ -13,6 +15,8 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
   ]
