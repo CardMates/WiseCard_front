@@ -38,6 +38,13 @@ public class NotificationListener extends NotificationListenerService {
     }
 
     @Override
+    public void onListenerConnected() {
+        super.onListenerConnected();
+        // 서비스 인스턴스를 Bridge 모듈에 전달
+        NotificationBridgeModule.setNotificationListenerInstance(this);
+    }
+
+    @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
         // 필요 시 구현
     }

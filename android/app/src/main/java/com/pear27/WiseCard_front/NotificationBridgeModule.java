@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.service.notification.StatusBarNotification;
+import android.os.Build;
 import android.provider.Settings;
 
 import androidx.annotation.NonNull;
@@ -19,14 +21,11 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import java.util.List;
-import java.util.HashSet;
-import java.util.Set;
 
 public class NotificationBridgeModule extends ReactContextBaseJavaModule {
     public static final String NAME = "NotificationBridge";
     private static ReactApplicationContext reactContext;
-
-    private Set<String> selectedApps = new HashSet<>();
+    private static NotificationListener notificationListenerInstance;
 
     public NotificationBridgeModule(ReactApplicationContext context) {
         super(context);
@@ -36,6 +35,40 @@ public class NotificationBridgeModule extends ReactContextBaseJavaModule {
     @NonNull @Override
     public String getName() {
         return NAME;
+    }
+
+    public static void setNotificationListenerInstance(NotificationListener instance) {
+        notificationListenerInstance = instance;
+    }
+
+    @ReactMethod
+    public void getActiveNotifications(Promise promise) {
+        if (notificationListenerInstance == null) {
+            promise.reject("NO_LISTENER", "NotificationListener not connected");
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            StatusBarNotification[] active = notificationListenerInstance.getActiveNotifications();
+            WritableArray arr = Arguments.createArray();
+            if (active != null) {
+                for (StatusBarNotification sbn : active) {
+                    WritableMap map = Arguments.createMap();
+                    map.putString("package", sbn.getPackageName());
+                    CharSequence titleCs = sbn.getNotification().extras.getCharSequence("android.title");
+                    CharSequence textCs = sbn.getNotification().extras.getCharSequence("android.text");
+                    String title = titleCs != null ? titleCs.toString() : "";
+                    String text = textCs != null ? textCs.toString() : "";
+                    map.putString("title", title);
+                    map.putString("text", text);
+                    map.putDouble("postedAt", sbn.getPostTime());
+                    arr.pushMap(map);
+                }
+            }
+            promise.resolve(arr);
+        } else {
+            promise.reject("NOT_SUPPORTED", "Requires API >= 18");
+        }
     }
 
     @ReactMethod

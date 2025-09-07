@@ -7,6 +7,32 @@
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   <queries>
+    <!-- 은행 -->
+    <package android:name="com.kbstar.kbbank" />
+    <package android:name="com.shinhan.sbanking" />
+    <package android:name="com.wooribank.smart.npib" />
+    <package android:name="com.hanabank.ebk.channel.android.hananbank" />
+    <package android:name="nh.smartbank" />
+    <package android:name="com.ibk.neobanking" />
+    <package android:name="com.scfirstbank.pib.smart" />
+    <package android:name="com.kakaobank.channel" />
+    <package android:name="viva.republica.tossbank" />
+    <!-- 카드 -->
+    <package android:name="com.shinhancard.smartshinhan" />
+    <package android:name="kr.co.samsungcard.mpocket" />
+    <package android:name="com.kbcard.cxh.appcard" />
+    <package android:name="com.hyundaicard.appcard" />
+    <package android:name="com.wooricard.smartapp" />
+    <package android:name="com.lotte.lottecard.o2" />
+    <package android:name="com.hanacard.paycla" />
+    <package android:name="com.bccard.smartapp" />
+    <package android:name="nh.card.smart" />
+    <!-- 페이 -->
+    <package android:name="com.kakaopay.app" />
+    <package android:name="com.samsung.android.spay" />
+    <package android:name="viva.republica.toss" />
+    <package android:name="com.nhnent.payapp" />
+    <package android:name="com.koces.android.zeroPay" />
     <intent>
       <action android:name="android.intent.action.VIEW"/>
       <category android:name="android.intent.category.BROWSABLE"/>
