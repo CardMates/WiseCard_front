@@ -1,11 +1,21 @@
 import { router, Stack } from "expo-router";
 import { useEffect } from "react";
-import { Alert, BackHandler, Platform } from "react-native";
+import { Alert, BackHandler, NativeEventEmitter, NativeModules, Platform } from "react-native";
 import { AuthProvider } from "../src/contexts/AuthContext";
 import AuthGuard from "./components/AuthGuard";
 
 export default function RootLayout() {
   useEffect(() => {
+    const { NotificationBridge } = NativeModules;
+    const emitter = new NativeEventEmitter(NotificationBridge);
+
+    // 알림 이벤트 리스너 등록
+    const subscription = emitter.addListener("OnNotificationReceived", (event) => {
+      console.log("📌 새 알림 수신:", event);
+    })
+
+    let backHandler: any;
+
     // Android에서만 동작
     if (Platform.OS === 'android') {
       const backAction = () => {
@@ -29,12 +39,15 @@ export default function RootLayout() {
         }
       };
 
-      const backHandler = BackHandler.addEventListener(
+      backHandler = BackHandler.addEventListener(
         "hardwareBackPress",
         backAction
       );
 
-      return () => backHandler.remove();
+      return () => {
+        subscription.remove();
+        if (backHandler) backHandler.remove();
+      };
     }
   }, []);
   return (
