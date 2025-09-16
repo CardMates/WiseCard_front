@@ -8,28 +8,22 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { CategoryButton, MenuButton } from './components/Button';
 import SearchBar from './components/SearchBar';
 
-const CARD_PREVIEW_WIDTH = 30;
+const CARD_PREVIEW_WIDTH = 25;
 const CARD_SPACING = 10;
 
 export default function MyCardsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
+  // 카드 리스트 너비 변수
   const [containerWidth, setContainerWidth] = useState(0);
   const [cardWidth, setCardWidth] = useState(0);
+  const [snapOffsets, setSnapOffsets] = useState<number[]>([]);
 
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const cardList = [
-    { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드1', info: '설명' },
-    { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드2', info: '설명' },
-    { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드3', info: '설명' },
-    { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드4', info: '설명' },
-    { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드5', info: '설명' },
-    { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드6', info: '설명' },
-    { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드7', info: '설명' },
-    { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드8', info: '설명' },
-  ]
+  type CardItem = { image: any; name: string; type: string; info: string };
+  const [cardList, setCardList] = useState<CardItem[]>([]);
 
   // 검색어 입력 핸들러
   const handleSearchChange = (text: string) => {
@@ -65,6 +59,17 @@ export default function MyCardsScreen() {
       const response = await axios.post('https://your-backend.com/api/search', data);
       */
       console.log(data);
+
+      setCardList([
+        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드1', type: 'credit', info: '설명' },
+        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드2', type: 'credit', info: '설명' },
+        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드3', type: 'check', info: '설명' },
+        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드4', type: 'credit', info: '설명' },
+        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드5', type: 'check', info: '설명' },
+        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드6', type: 'credit', info: '설명' },
+        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드7', type: 'check', info: '설명' },
+        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드8', type: 'check', info: '설명' },
+      ])
     } catch (error) {
       console.error('검색 요청 실패:', error);
     }
@@ -73,6 +78,20 @@ export default function MyCardsScreen() {
   useEffect(() => {
     fetchResults();
   }, [searchQuery]);
+
+  useEffect(() => {
+    if (cardList.length === 0 || cardWidth === 0) {
+      setSnapOffsets([]);
+      return;
+    }
+
+    const interval = cardWidth + CARD_SPACING;
+    const offsets = cardList.map((_, i) => {
+      return Math.round(i * interval);
+    })
+
+    setSnapOffsets(offsets);
+  }, [cardList, cardWidth]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -114,11 +133,11 @@ export default function MyCardsScreen() {
         </View>
       </View>
       <View
-        style={{ flex: 1 }}
+        style={{ marginHorizontal: -30 }}
         onLayout={(event) => {
           const { width } = event.nativeEvent.layout;
           setContainerWidth(width);
-          setCardWidth(width - (CARD_PREVIEW_WIDTH * 2 + CARD_SPACING));
+          setCardWidth(width - 60);
         }}
       >
         <FlatList
@@ -126,14 +145,14 @@ export default function MyCardsScreen() {
           horizontal
           keyExtractor={(_, index) => index.toString()}
           showsHorizontalScrollIndicator={false}
-          snapToInterval={cardWidth + CARD_SPACING} // 카드+간격 만큼 스냅
           decelerationRate="fast"
-          snapToAlignment="center" // 카드 중앙이 화면 중앙에 오도록
+          snapToAlignment="start"
           contentContainerStyle={{
-            //paddingHorizontal: CARD_PREVIEW_WIDTH, // 양옆 여백 → 첫/마지막 카드도 가운데에 위치
+            paddingHorizontal: CARD_PREVIEW_WIDTH, // 양옆 여백 → 첫/마지막 카드도 가운데에 위치
           }}
           onScroll={handleScroll}
           scrollEventThrottle={16}
+          snapToOffsets={snapOffsets}
           renderItem={({ item }) => (
             <View
               style={{
@@ -153,16 +172,15 @@ export default function MyCardsScreen() {
             </View>
           )}
         />
-
-        {/* 카드 정보 영역 */}
-        <View style={{ marginTop: 20, alignItems: 'center' }}>
-          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
-            {cardList[activeIndex]?.name}
-          </Text>
-          <Text style={{ fontSize: 14, color: 'gray', marginTop: 5 }}>
-            {cardList[activeIndex]?.info}
-          </Text>
-        </View>
+      </View>
+      {/* 카드 정보 영역 */}
+      <View style={{ marginTop: 20, alignItems: 'center' }}>
+        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
+          {cardList[activeIndex]?.name}
+        </Text>
+        <Text style={{ fontSize: 14, color: 'gray', marginTop: 5 }}>
+          {cardList[activeIndex]?.info}
+        </Text>
       </View>
     </SafeAreaView>
   );
