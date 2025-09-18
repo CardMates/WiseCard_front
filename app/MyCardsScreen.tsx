@@ -2,7 +2,7 @@ import { BackButtonStyles } from '@/src/styles/buttons/BackBtn';
 import { CategoryButtonStyles } from '@/src/styles/buttons/CategoryBtn';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { CategoryButton, MenuButton } from './components/Button';
@@ -60,7 +60,7 @@ export default function MyCardsScreen() {
       */
       console.log(data);
 
-      setCardList([
+      const cards = [
         { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드1', type: 'credit', info: '설명' },
         { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드2', type: 'credit', info: '설명' },
         { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드3', type: 'check', info: '설명' },
@@ -69,7 +69,15 @@ export default function MyCardsScreen() {
         { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드6', type: 'credit', info: '설명' },
         { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드7', type: 'check', info: '설명' },
         { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드8', type: 'check', info: '설명' },
-      ])
+      ]; // <- 실제 API 스펙에 맞게 수정
+
+      setCardList([...cards, {
+        type: 'add',
+        image: undefined,
+        name: '',
+        info: ''
+      }]);  // 리스트 마지막에 카드 추가 버튼
+
     } catch (error) {
       console.error('검색 요청 실패:', error);
     }
@@ -161,16 +169,36 @@ export default function MyCardsScreen() {
                 alignItems: 'center',
               }}
             >
-              <Image
-                source={item.image}
-                resizeMode="contain"
-                style={{
-                  width: '100%',
-                  borderRadius: 12,
-                }}
-              />
+              {(item.type === 'add') ?
+                <TouchableOpacity
+                  style={{
+                    width: '100%',
+                    height: 180,
+                    borderRadius: 12,
+                    borderWidth: 2,
+                    borderColor: '#ccc',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  onPress={() => { router.push('../AddCardsScreen'); }}
+                >
+                  <Text style={{ color: '#666', fontSize: 18, fontWeight: 'bold' }}>+ 카드 추가</Text>
+                </TouchableOpacity>
+                :
+                <Image
+                  source={item.image}
+                  resizeMode="cover"
+                  style={{
+                    width: '100%',
+                    height: 180,
+                    // aspectRatio: 1.586,
+                    borderRadius: 12,
+                    backgroundColor: "red",
+                  }}
+                />}
             </View>
-          )}
+          )
+          }
         />
       </View>
       {/* 카드 정보 영역 */}

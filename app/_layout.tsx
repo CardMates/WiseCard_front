@@ -62,6 +62,12 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name="AddCardsScreen"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
             name="SettingsScreen"
             options={{
               headerShown: false,
