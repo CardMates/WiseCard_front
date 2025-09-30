@@ -11,16 +11,21 @@ import Loading from './Loading';
 import SearchBar from './SearchBar';
 
 export default function KakaoMapView() {
-  const kakaoMapWeb = process.env.EXPO_PUBLIC_KAKAO_MAP_WEB
+  const kakaoMapWeb = process.env.EXPO_PUBLIC_KAKAO_MAP_WEB;
   const location = useLocaiton();
   const webViewRef = useRef<WebView>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  type Store = { id: number; name: string; lat: number; lng: number };
+  const [stores, setStores] = useState<Store[]>([]);
 
   const [pageReady, setPageReady] = useState(false);
-  const initialUrl = `${kakaoMapWeb}?lat=${location?.lat}&lng=${location?.lng}&v=${Date.now()}`;
+
+  const initialUrlRef = useRef(
+    `${kakaoMapWeb}?lat=${location?.lat}&lng=${location?.lng}&v=${Date.now()}`
+  );
 
   // 검색어 입력 핸들러
   const handleSearchChange = (text: string) => {
@@ -32,6 +37,7 @@ export default function KakaoMapView() {
     // 토글 선택: 같은 카테고리 클릭 시 선택 해제
     if (selectedCategory === category) {
       setSelectedCategory(null);
+      setStores([]); // 선택 해제 시 stores 초기화
     } else {
       setSelectedCategory(category);
     }
@@ -42,27 +48,48 @@ export default function KakaoMapView() {
     const data = {
       query: searchQuery,
       category: selectedCategory,
-    }
+    };
     try {
       /*
       const response = await axios.post('https://your-backend.com/api/search', data);
       */
-      console.log(data);
+      console.log('검색 실행:', data);
+
+      // category나 searchQuery가 없으면 stores를 초기화하지 않음
+      if (!searchQuery && !selectedCategory) {
+        return;
+      }
+
+      // stores example
+      const newStores = [
+        { id: 1, name: "카페 A", lat: 37.4979, lng: 127.0276 },
+        { id: 2, name: "카페 B", lat: 37.4989, lng: 127.0286 },
+        { id: 3, name: "카페 C", lat: 37.4969, lng: 127.0266 },
+      ];
+      setStores(newStores);
     } catch (error) {
       console.error('검색 요청 실패:', error);
     }
   };
 
-  // 현재 위치 가져오기 로직
+  // 현재 위치 가져오기 로직 (stores 초기화 추가)
   const handleRefreshLocation = async () => {
     if (isRefreshing || !pageReady) return;
     setIsRefreshing(true);
+
+    // stores 초기화 - 현재 위치만 보여주는 상태로 복구
+    setStores([]);
+    setSearchQuery(''); // 검색어도 초기화
+    setSelectedCategory(null); // 카테고리 선택도 해제
+
     try {
       // 1) 즉시: 마지막으로 알고 있는 위치가 있으면 먼저 반영해 체감 속도 향상
       const lastKnown = await Location.getLastKnownPositionAsync();
       if (lastKnown) {
         const { latitude, longitude } = lastKnown.coords;
-        webViewRef.current?.injectJavaScript(`moveToCurrentLocation(${latitude}, ${longitude}); true;`);
+        webViewRef.current?.injectJavaScript(
+          `moveToCurrentLocation(${latitude}, ${longitude}); true;`
+        );
       }
 
       // 2) 병렬로 최신 위치 요청 (균형 정확도 + 짧은 타임아웃)
@@ -86,7 +113,9 @@ export default function KakaoMapView() {
 
       const fresh = await withTimeout;
       const { latitude, longitude } = fresh.coords;
-      webViewRef.current?.injectJavaScript(`moveToCurrentLocation(${latitude}, ${longitude}); true;`);
+      webViewRef.current?.injectJavaScript(
+        `moveToCurrentLocation(${latitude}, ${longitude}); true;`
+      );
     } catch (error) {
       console.warn('Failed to refresh precise location, kept last known if any.', error);
     } finally {
@@ -98,11 +127,28 @@ export default function KakaoMapView() {
     const data = String(event.nativeEvent.data);
     if (data === 'READY') setPageReady(true);
 
-    console.log('WebView에서 받은 메시지:', data)
+    console.log('WebView에서 받은 메시지:', data);
   };
 
   useEffect(() => {
-    fetchResults();
+    if (pageReady) {
+      if (stores.length > 0) {
+        webViewRef.current?.injectJavaScript(
+          `window.setPins(${JSON.stringify(stores)}); true;`
+        );
+      } else {
+        // stores가 비어있으면 pins 제거
+        webViewRef.current?.injectJavaScript(
+          `window.setPins([]); true;`
+        );
+      }
+    }
+  }, [stores, pageReady]);
+
+  useEffect(() => {
+    if (selectedCategory) {
+      fetchResults();
+    }
   }, [selectedCategory]);
 
   // Early return after all hooks are called
@@ -113,13 +159,19 @@ export default function KakaoMapView() {
       {/* WebView */}
       <WebView
         ref={webViewRef}
-        source={{ uri: initialUrl }}
+        source={{ uri: initialUrlRef.current }}
         style={styles.webview}
         javaScriptEnabled={true}
         originWhitelist={['*']}
         startInLoadingState={true}
         renderLoading={() => <Loading />}
         onMessage={onMessage}
+        onLoadStart={() => console.log('WebView: 로딩 시작', initialUrlRef.current)}
+        onLoadEnd={() => console.log('WebView: 로딩 끝')}
+        onError={(syntheticEvent) => {
+          const { nativeEvent } = syntheticEvent;
+          console.error('WebView 에러:', nativeEvent);
+        }}
       />
 
       {/* 오버레이 */}
