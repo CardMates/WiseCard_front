@@ -15,6 +15,7 @@ export const CategoryButtonStyles = StyleSheet.create({
         width: 24,
         height: 24,
         marginRight: 6,
+        tintColor: '#414141'
     },
     buttonContentWrapper: {
         flexDirection: 'row',
