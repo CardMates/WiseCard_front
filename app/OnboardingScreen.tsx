@@ -1,4 +1,3 @@
-import { gsiButtonStyles } from '@/src/styles/buttons/GoogleLoginBtn';
 import { ksiButtonStyles } from '@/src/styles/buttons/KakaoLoginBtn';
 import { saveToken } from '@/src/utils/authStorage';
 import { router } from 'expo-router';
@@ -36,23 +35,6 @@ export default function OnboardingScreen() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setIsLoginLoading(true);
-    try {
-      // TODO: Implement Google login
-      console.log('👤 Google login pressed');
-      // await yourGoogleLogin();
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      await saveToken('google');
-      router.replace('/'); // app/index.tsx로 이동
-    } catch (error) {
-      console.error('❌ Google login error', error);
-      Alert.alert('로그인 실패', '로그인 중 오류가 발생했습니다. 다시 시도해 주세요.');
-    } finally {
-      if (isMountedRef.current) setIsLoginLoading(false);
-    }
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -70,13 +52,6 @@ export default function OnboardingScreen() {
             onPress={handleKakaoLogin}
             disabled={isLoginLoading}
             stylesSet={ksiButtonStyles} />
-          <SocialLoginButton
-            title="Google 계정으로 로그인"
-            icon={require('../assets/images/g-logo.png')}
-            onPress={handleGoogleLogin}
-            disabled={isLoginLoading}
-            stylesSet={gsiButtonStyles}
-          />
         </View>
       </View>
     </SafeAreaView>
@@ -95,7 +70,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 200,
+    marginBottom: 250,
   },
   title: {
     fontSize: 32,
