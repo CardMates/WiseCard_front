@@ -1,13 +1,27 @@
 import { BackButtonStyles } from '@/src/styles/buttons/BackBtn';
+import { CategoryButtonStyles } from '@/src/styles/buttons/CategoryBtn';
 import Colors from '@/src/styles/colors';
 import { router } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MenuButton } from './components/Button';
+import { CategoryButton, MenuButton } from './components/Button';
 import StoreBlock from './components/StoreBlock';
 
 export default function PromotionScreen() {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const categories = [
+    { label: '현대카드', value: 'mart', icon: null },
+    { label: '롯데카드', value: 'convenience_store', icon: null },
+    { label: '우리카드', value: 'academy', icon: null },
+    { label: '신한카드', value: 'gas_station', icon: null },
+    { label: '국민카드', value: 'cultural_facility', icon: null },
+    { label: '삼성카드', value: 'accommodation', icon: null },
+    { label: '농협카드', value: 'restaurant', icon: null },
+    { label: '하나카드', value: 'cafe', icon: null },
+  ];
+
   const promotionList = [
     { name: '이벤트1', info: 'XX카드 사용 시 30% 할인', url: 'https://www.samsungcard.com/personal/event/ing/UHPPBE1403M0.jsp?cms_id=3714798' },
     { name: '이벤트2', info: 'XX카드 사용 시 30% 할인', url: 'https://www.samsungcard.com/personal/event/ing/UHPPBE1403M0.jsp?cms_id=3714798' },
@@ -26,6 +40,16 @@ export default function PromotionScreen() {
     { name: '이벤트15', info: 'XX카드 사용 시 30% 할인', url: 'https://www.samsungcard.com/personal/event/ing/UHPPBE1403M0.jsp?cms_id=3714798' },
   ]
 
+  // 카테고리 선택 핸들러
+  const handleCategorySelect = (category: string) => {
+    // 토글 선택: 같은 카테고리 클릭 시 선택 해제
+    if (selectedCategory === category) {
+      setSelectedCategory(null);
+    } else {
+      setSelectedCategory(category);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -39,6 +63,24 @@ export default function PromotionScreen() {
           <Text style={styles.title}>기간 한정 프로모션</Text>
           <Text style={styles.subtitle}>내 카드로 누릴 수 있는 기간 한정 프로모션은?</Text>
         </View>
+      </View>
+      <View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoryContainer}
+        >
+          {categories.map((category) => (
+            <CategoryButton
+              icon={category.icon}
+              key={category.value} // 예: cafe
+              title={category.label} // 예: 카페
+              onPress={() => handleCategorySelect(category.value)}
+              selected={selectedCategory === category.value}
+              stylesSet={CategoryButtonStyles}
+            />
+          ))}
+        </ScrollView>
       </View>
       <ScrollView
         style={{ flex: 1 }}
@@ -87,6 +129,12 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     color: '#666',
+  },
+  categoryContainer: {
+    //flexDirection: 'row',
+    paddingHorizontal: 3,
+    paddingBottom: 15,
+    gap: 5,
   },
   eventContainer: {
     gap: 5,

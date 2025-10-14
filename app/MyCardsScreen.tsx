@@ -1,91 +1,140 @@
-import { BackButtonStyles } from '@/src/styles/buttons/BackBtn';
-import { CategoryButtonStyles } from '@/src/styles/buttons/CategoryBtn';
-import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { CategoryButton, MenuButton } from './components/Button';
-import SearchBar from './components/SearchBar';
+import { cardCompanies } from "@/src/constants/cardCompanies";
+import { Card, cardExamples } from "@/src/constants/cardExamples";
+import {
+  CardFilters,
+  getUserCards,
+  removeUserCard,
+} from "@/src/hooks/useCards";
+import { BackButtonStyles } from "@/src/styles/buttons/BackBtn";
+import { CategoryButtonStyles } from "@/src/styles/buttons/CategoryBtn";
+import Colors from "@/src/styles/colors";
+import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ActionButton, CategoryButton, MenuButton } from "./components/Button";
+import { Dropdown } from "./components/DropDown";
+import SearchBar from "./components/SearchBar";
 
 const CARD_PREVIEW_WIDTH = 25;
 const CARD_SPACING = 10;
 
 export default function MyCardsScreen() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const CARD_TYPES = [
+    { key: "credit", title: "신용카드" },
+    { key: "check", title: "체크카드" },
+  ];
 
-  // 카드 리스트 너비 변수
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [cardWidth, setCardWidth] = useState(0);
-  const [snapOffsets, setSnapOffsets] = useState<number[]>([]);
-
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  type CardItem = { image: any; name: string; type: string; info: string };
-  const [cardList, setCardList] = useState<CardItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedBank, setSelectedBank] = useState<string | null>(null);
+  const [selectedCardType, setSelectedCardType] = useState<string | null>(null);
 
   // 검색어 입력 핸들러
   const handleSearchChange = (text: string) => {
     setSearchQuery(text);
   };
 
-  // 카테고리 선택 핸들러
-  /*
-  const handleCategorySelect = (category: string) => {
-    // 토글 선택: 같은 카테고리 클릭 시 선택 해제
-    if (selectedCategory === category) {
-      setSelectedCategory(null);
+  // 카드 타입 (credit/check) 선택 핸들러
+  const handleCardTypeSelect = (cardType: string) => {
+    if (selectedCardType === cardType) {
+      setSelectedCardType(null);
     } else {
-      setSelectedCategory(category);
+      setSelectedCardType(cardType);
     }
   };
-  */
 
-  const handleScroll = (event: { nativeEvent: { contentOffset: { x: any; }; }; }) => {
+  const [cardList, setCardList] = useState<Card[]>([]);
+
+  // 카드 리스트 너비 변수
+  const [cardWidth, setCardWidth] = useState(0);
+  const [snapOffsets, setSnapOffsets] = useState<number[]>([]);
+
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleScroll = (event: {
+    nativeEvent: { contentOffset: { x: any } };
+  }) => {
     const offsetX = event.nativeEvent.contentOffset.x;
     const index = Math.round(offsetX / (cardWidth + CARD_SPACING));
     setActiveIndex(index);
   };
 
-  // 백엔드 요청 함수
-  const fetchResults = async () => {
-    const data = {
-      query: searchQuery,
-      category: selectedCategory,
-    }
+  // 카드 목록 요청 함수
+  const fetchUserCards = async () => {
+    const cardFilter: CardFilters = {};
+
+    if (selectedBank) cardFilter.cardBank = selectedBank;
+    if (selectedCardType) cardFilter.cardType = selectedCardType;
+    if (searchQuery !== "") cardFilter.cardName = searchQuery;
+
+    console.log("📤 카드 필터 요청 데이터:", cardFilter);
+
     try {
-      /*
-      const response = await axios.post('https://your-backend.com/api/search', data);
-      */
+      const data = await getUserCards(cardFilter);
       console.log(data);
 
-      const cards = [
-        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드1', type: 'credit', info: '설명' },
-        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드2', type: 'credit', info: '설명' },
-        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드3', type: 'check', info: '설명' },
-        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드4', type: 'credit', info: '설명' },
-        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드5', type: 'check', info: '설명' },
-        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드6', type: 'credit', info: '설명' },
-        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드7', type: 'check', info: '설명' },
-        { image: require('../assets/images/card_example.png'), name: '신한 어쩌구 카드8', type: 'check', info: '설명' },
-      ]; // <- 실제 API 스펙에 맞게 수정
+      if (data.length == 0) {
+        setCardList([
+          ...cardExamples,
+          {
+            cardId: 0,
+            cardName: "",
+            cardBank: undefined,
+            imgUrl: undefined,
+            type: "add",
+            benefits: {
+              discounts: [],
+              points: [],
+              cashbacks: [],
+              applicableCategory: [],
+              applicableTargets: [],
+            },
+          },
+        ]); // 리스트 마지막에 카드 추가 버튼
+      } else {
+        setCardList([
+          ...data,
+          {
+            cardId: 0,
+            cardName: "",
+            cardBank: undefined,
+            imgUrl: undefined,
+            type: "add",
+            benefits: {
+              discounts: [],
+              points: [],
+              cashbacks: [],
+              applicableCategory: [],
+              applicableTargets: [],
+            },
+          },
+        ]);
+      }
+    } catch (err) {
+      console.error("검색 요청 실패:", err);
+    }
+  };
 
-      setCardList([...cards, {
-        type: 'add',
-        image: undefined,
-        name: '',
-        info: ''
-      }]);  // 리스트 마지막에 카드 추가 버튼
-
-    } catch (error) {
-      console.error('검색 요청 실패:', error);
+  const handleRemoveUserCard = async () => {
+    console.log("delete card num:", cardList[activeIndex]?.cardName);
+    try {
+      const result = removeUserCard(cardList[activeIndex].cardId);
+      console.log(result);
+    } catch (err) {
+      console.error(err);
     }
   };
 
   useEffect(() => {
-    fetchResults();
-  }, [searchQuery]);
+    fetchUserCards();
+  }, [selectedBank, selectedCardType, searchQuery]);
 
   useEffect(() => {
     if (cardList.length === 0 || cardWidth === 0) {
@@ -96,7 +145,7 @@ export default function MyCardsScreen() {
     const interval = cardWidth + CARD_SPACING;
     const offsets = cardList.map((_, i) => {
       return Math.round(i * interval);
-    })
+    });
 
     setSnapOffsets(offsets);
   }, [cardList, cardWidth]);
@@ -105,7 +154,7 @@ export default function MyCardsScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <MenuButton
-          icon={require('../assets/images/icons/angle-left-b.png')}
+          icon={require("../assets/images/icons/angle-left-b.png")}
           onPress={() => router.back()}
           disabled={false}
           stylesSet={BackButtonStyles}
@@ -118,33 +167,32 @@ export default function MyCardsScreen() {
         <SearchBar
           value={searchQuery}
           onChangeText={handleSearchChange}
-          placeholder='카드 검색 (카드명 혹은 별명)'
-          onSubmitEditing={() => { }}
+          placeholder="카드 검색 (카드명 혹은 별명)"
+          onSubmitEditing={() => {}}
         />
         <View style={styles.categoryContainer}>
-          <CategoryButton
-            icon={require('../assets/images/icons/credit-card.png')}
-            key={'credit'}
-            title={'신용카드'}
-            onPress={() => { }}
-            selected={false}
-            stylesSet={CategoryButtonStyles}
+          <Dropdown
+            options={cardCompanies}
+            selectedValue={selectedBank}
+            onSelect={setSelectedBank}
+            placeholder="카드사 선택"
           />
-          <CategoryButton
-            icon={require('../assets/images/icons/credit-card.png')}
-            key={'check'}
-            title={'체크카드'}
-            onPress={() => { }}
-            selected={false}
-            stylesSet={CategoryButtonStyles}
-          />
+          {CARD_TYPES.map((type) => (
+            <CategoryButton
+              icon={null}
+              key={type.key}
+              title={type.title}
+              onPress={() => handleCardTypeSelect(type.key)}
+              selected={selectedCardType === type.key}
+              stylesSet={CategoryButtonStyles}
+            />
+          ))}
         </View>
       </View>
       <View
         style={{ marginHorizontal: -30 }}
         onLayout={(event) => {
           const { width } = event.nativeEvent.layout;
-          setContainerWidth(width);
           setCardWidth(width - 60);
         }}
       >
@@ -166,58 +214,82 @@ export default function MyCardsScreen() {
               style={{
                 width: cardWidth,
                 marginHorizontal: CARD_SPACING / 2,
-                alignItems: 'center',
+                alignItems: "center",
               }}
             >
-              {(item.type === 'add') ?
+              {item.type === "add" ? (
                 <TouchableOpacity
                   style={{
-                    width: '100%',
+                    width: "100%",
                     height: 180,
                     borderRadius: 12,
                     borderWidth: 2,
-                    borderColor: '#ccc',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    borderColor: "#ccc",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
-                  onPress={() => { router.push('../AddCardsScreen'); }}
+                  onPress={() => {
+                    router.push("../AddCardsScreen");
+                  }}
                 >
-                  <Text style={{ color: '#666', fontSize: 18, fontWeight: 'bold' }}>+ 카드 추가</Text>
+                  <Text
+                    style={{ color: "#666", fontSize: 18, fontWeight: "bold" }}
+                  >
+                    + 카드 추가
+                  </Text>
                 </TouchableOpacity>
-                :
+              ) : (
                 <Image
-                  source={item.image}
+                  source={{ uri: item.imgUrl }}
                   resizeMode="cover"
                   style={{
-                    width: '100%',
+                    width: "100%",
                     height: 180,
                     // aspectRatio: 1.586,
                     borderRadius: 12,
                     backgroundColor: "red",
                   }}
-                />}
+                />
+              )}
             </View>
-          )
-          }
+          )}
         />
       </View>
       {/* 카드 정보 영역 */}
-      <View style={{ marginTop: 20, alignItems: 'center' }}>
-        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
-          {cardList[activeIndex]?.name}
+      <View style={{ marginTop: 20, alignItems: "center" }}>
+        <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+          {cardList[activeIndex]?.cardName}
         </Text>
-        <Text style={{ fontSize: 14, color: 'gray', marginTop: 5 }}>
-          {cardList[activeIndex]?.info}
-        </Text>
+        {/* 모든 혜택 description 출력 */}
+        {[
+          ...(cardList[activeIndex]?.benefits?.discounts || []),
+          ...(cardList[activeIndex]?.benefits?.points || []),
+          ...(cardList[activeIndex]?.benefits?.cashbacks || []),
+        ]
+          .filter((b) => b.description)
+          .map((benefit, id) => (
+            <Text
+              key={id}
+              style={{ fontSize: 14, color: "gray", marginTop: 5 }}
+            >
+              • {benefit.description}
+            </Text>
+          ))}
+        {cardList[activeIndex]?.type !== "add" && (
+          <ActionButton
+            title={"카드 삭제하기"}
+            onPress={() => handleRemoveUserCard()}
+            stylesSet={DeleteActionButtonStyles}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
-
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     flex: 1,
     paddingHorizontal: 30,
   },
@@ -232,20 +304,20 @@ const styles = StyleSheet.create({
   title: {
     color: Colors.PRIMARY_BLUE,
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
   filterContainer: {
-    flexDirection: 'column',
-    width: '100%',
+    flexDirection: "column",
+    width: "100%",
     gap: 8,
   },
   categoryContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingBottom: 15,
     gap: 5,
   },
@@ -255,5 +327,29 @@ const styles = StyleSheet.create({
   },
   scroll: {
     paddingHorizontal: 10,
+  },
+});
+
+const DeleteActionButtonStyles = StyleSheet.create({
+  materialButton: {
+    backgroundColor: "white",
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 40,
+    paddingHorizontal: 60,
+    height: 40,
+    borderRadius: 28,
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "red",
+  },
+  buttonContents: {
+    color: "red",
+    fontSize: 16,
+    lineHeight: 20,
+    fontWeight: "400",
+    overflow: "hidden",
+    includeFontPadding: false, // Android에서 불필요한 여백 제거
+    textAlignVertical: "center",
   },
 });
