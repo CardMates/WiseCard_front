@@ -21,6 +21,22 @@ interface Benefits {
   cashbacks: BenefitDetail[];
   applicableCategory: string[];
   applicableTargets: string[];
+  summary?: string;
+}
+
+interface Performance {
+  currentAmount: number; // 현재 실적
+  targetAmount: number; // 목표 실적
+  isAchieved: boolean; // 달성 여부
+}
+
+interface Limit {
+  usedDiscountAmount: number; // 사용된 할인 금액
+  totalDiscountLimit: number; // 할인 한도
+  usedPointAmount: number; // 사용된 포인트 금액
+  totalPointLimit: number; // 포인트 한도
+  usedCashbackAmount: number; // 사용된 캐시백 금액
+  totalCashbackLimit: number; // 캐시백 한도
 }
 
 export interface Card {
@@ -30,6 +46,15 @@ export interface Card {
   imgUrl?: string; // undefined 허용
   type: string;
   benefits: Benefits;
+}
+
+export interface MatchingCard {
+  cardName: string;
+  imgUrl: string;
+  type: string;
+  benefits: Benefits;
+  performance: Performance;
+  limits: Limit;
 }
 
 export const cardExamples = [
