@@ -1,4 +1,6 @@
+import { Store } from "@/src/constants/storeExamples";
 import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { router } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text } from "react-native";
 import StoreBlock from "./StoreBlock";
@@ -6,19 +8,15 @@ import StoreBlock from "./StoreBlock";
 interface BottomSheetProps {
   isVisible: boolean;
   onClose: () => void;
-  stores?: any[]; // 변경요망
+  stores?: Store[];
 }
 
 export function BottomSheet({ isVisible, onClose, stores }: BottomSheetProps) {
-  // ref
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
-  // variables
   const snapPoints = useMemo(() => ["15%", "50%", "80%"], []);
 
   const handleSheetChanges = useCallback(
     (index: number) => {
-      console.log("handleSheetChanges", index);
       if (index === -1) {
         onClose();
       }
@@ -55,9 +53,13 @@ export function BottomSheet({ isVisible, onClose, stores }: BottomSheetProps) {
             <StoreBlock
               key={index}
               store={store}
-              onPress={() => {
-                console.log("pressed!");
-              }}
+              onPress={() =>
+                router.push({
+                  pathname: "/StoreDetailScreen",
+                  params: { name: store.placeName },
+                  // 추후 파라미터 수정
+                })
+              }
             />
           ))}
         {/* 테스트용 긴 콘텐츠 */}
