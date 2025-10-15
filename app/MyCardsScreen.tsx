@@ -1,5 +1,5 @@
 import { cardCompanies } from "@/src/constants/cardCompanies";
-import { Card, cardExamples } from "@/src/constants/cardExamples";
+import { Card } from "@/src/constants/cardExamples";
 import {
   CardFilters,
   getUserCards,
@@ -8,9 +8,10 @@ import {
 import { BackButtonStyles } from "@/src/styles/buttons/BackBtn";
 import { CategoryButtonStyles } from "@/src/styles/buttons/CategoryBtn";
 import Colors from "@/src/styles/colors";
-import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
+  Alert,
   FlatList,
   Image,
   StyleSheet,
@@ -78,24 +79,23 @@ export default function MyCardsScreen() {
 
     try {
       const data = await getUserCards(cardFilter);
-      console.log(data);
 
       if (data.length == 0) {
         setCardList([
-          ...cardExamples,
           {
             cardId: 0,
             cardName: "",
-            cardBank: undefined,
             imgUrl: undefined,
-            type: "add",
             benefits: {
               discounts: [],
               points: [],
               cashbacks: [],
               applicableCategory: [],
               applicableTargets: [],
+              summary: "",
             },
+            cardCompany: undefined,
+            cardType: "add",
           },
         ]); // 리스트 마지막에 카드 추가 버튼
       } else {
@@ -104,16 +104,17 @@ export default function MyCardsScreen() {
           {
             cardId: 0,
             cardName: "",
-            cardBank: undefined,
             imgUrl: undefined,
-            type: "add",
             benefits: {
               discounts: [],
               points: [],
               cashbacks: [],
               applicableCategory: [],
               applicableTargets: [],
+              summary: "",
             },
+            cardCompany: undefined,
+            cardType: "add",
           },
         ]);
       }
@@ -124,18 +125,45 @@ export default function MyCardsScreen() {
 
   const handleRemoveUserCard = async () => {
     console.log("delete card num:", cardList[activeIndex]?.cardName);
-    try {
-      const result = removeUserCard(cardList[activeIndex].cardId);
-      console.log(result);
-    } catch (err) {
-      console.error(err);
-    }
+    // 확인 다이얼로그
+    Alert.alert(
+      "카드 삭제",
+      `선택하신 카드 "${cardList[activeIndex].cardName}"를 삭제하시겠습니까?`,
+      [
+        {
+          text: "취소",
+          style: "cancel",
+        },
+        {
+          text: "삭제",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const result = await removeUserCard(cardList[activeIndex].cardId);
+              console.log(result);
+              Alert.alert("완료", "카드가 삭제되었습니다");
+              fetchUserCards();
+            } catch (err) {
+              console.error(err);
+              Alert.alert("오류", "카드 삭제 중 문제가 발생했습니다");
+            }
+          },
+        },
+      ]
+    );
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserCards();
+    }, [selectedBank, selectedCardType, searchQuery])
+  );
+
+  /*
   useEffect(() => {
     fetchUserCards();
   }, [selectedBank, selectedCardType, searchQuery]);
-
+*/
   useEffect(() => {
     if (cardList.length === 0 || cardWidth === 0) {
       setSnapOffsets([]);
@@ -217,7 +245,7 @@ export default function MyCardsScreen() {
                 alignItems: "center",
               }}
             >
-              {item.type === "add" ? (
+              {item.cardType === "add" ? (
                 <TouchableOpacity
                   style={{
                     width: "100%",
@@ -261,21 +289,8 @@ export default function MyCardsScreen() {
           {cardList[activeIndex]?.cardName}
         </Text>
         {/* 모든 혜택 description 출력 */}
-        {[
-          ...(cardList[activeIndex]?.benefits?.discounts || []),
-          ...(cardList[activeIndex]?.benefits?.points || []),
-          ...(cardList[activeIndex]?.benefits?.cashbacks || []),
-        ]
-          .filter((b) => b.description)
-          .map((benefit, id) => (
-            <Text
-              key={id}
-              style={{ fontSize: 14, color: "gray", marginTop: 5 }}
-            >
-              • {benefit.description}
-            </Text>
-          ))}
-        {cardList[activeIndex]?.type !== "add" && (
+        <Text>{cardList[activeIndex]?.benefits.summary}</Text>
+        {cardList[activeIndex]?.cardType !== "add" && (
           <ActionButton
             title={"카드 삭제하기"}
             onPress={() => handleRemoveUserCard()}

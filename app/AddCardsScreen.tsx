@@ -56,7 +56,6 @@ export default function AddCardsScreen() {
     console.log("📤 카드 필터 요청 데이터:", cardFilter);
     try {
       const data = await filterCards(cardFilter);
-      console.log(data);
 
       if (data.length == 0) {
         /* data example */
@@ -84,7 +83,9 @@ export default function AddCardsScreen() {
 
     try {
       const res = await addUserCard(cardId);
-
+      console.log(res);
+      alert("카드 등록이 완료되었습니다.");
+      setSelectedCardId(null);
       //TODO: 성공일 경우 "성공적으로 카드 등록" alert
 
       //TODO: 이미 등록된 카드일 경우 "이미 등록된 카드" alert
@@ -149,33 +150,28 @@ export default function AddCardsScreen() {
               onPress={() => handleCardSelect(card.cardId)}
             >
               <Image
-                source={{ uri: card.imgUrl }}
+                source={
+                  card.imgUrl && card.imgUrl.trim() !== ""
+                    ? { uri: card.imgUrl }
+                    : require("../assets/images/card_example.png")
+                }
                 style={styles.cardImage}
-                defaultSource={require("../assets/images/card_example.png")}
               />
               <View>
                 <Text style={styles.cardName}>{card.cardName}</Text>
                 {/* 모든 혜택 description 출력 */}
-                {[
-                  ...(card.benefits.discounts || []),
-                  ...(card.benefits.points || []),
-                  ...(card.benefits.cashbacks || []),
-                ]
-                  .filter((b) => b.description)
-                  .map((benefit, id) => (
-                    <Text key={id} style={styles.cardInfo}>
-                      • {benefit.description}
-                    </Text>
-                  ))}
               </View>
             </TouchableOpacity>
             {/* 내 카드에 추가하기 버튼 - 선택된 경우에만 표시 */}
             {selectedCardId === card.cardId && (
-              <ActionButton
-                title={"내 카드에 추가하기"}
-                onPress={() => handleAddCard(card.cardId)}
-                stylesSet={AddActionButtonStyles}
-              />
+              <View>
+                <Text>{card.benefits.summary}</Text>
+                <ActionButton
+                  title={"내 카드에 추가하기"}
+                  onPress={() => handleAddCard(card.cardId)}
+                  stylesSet={AddActionButtonStyles}
+                />
+              </View>
             )}
           </View>
         ))}
