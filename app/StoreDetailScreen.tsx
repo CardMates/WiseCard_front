@@ -1,60 +1,22 @@
 import { categories } from "@/src/constants/categories";
+import { StoreBenefit, StoreCard } from "@/src/constants/storeExamples";
 import { BackButtonStyles } from "@/src/styles/buttons/BackBtn";
 import Colors from "@/src/styles/colors";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
+import { useSearchParams } from "expo-router/build/hooks";
 import React from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MenuButton } from "./components/Button";
 
 export default function StoreDetailScreen() {
-  const params = useLocalSearchParams<{ name?: string; info?: "설명" }>();
+  const params = useSearchParams();
+  const storeDataStr = params.get("storeData");
+  const store = storeDataStr ? JSON.parse(storeDataStr) : null;
 
   const shoppingCategory = categories.find((cat) => cat.value === "shopping");
-  const name = params.name ?? "스토어 이름";
+  const name = store.placeName ?? "스토어 이름";
   const storeInfo = "서울특별시 XX구 XX동 XX번길";
-  const cardList = [
-    {
-      image: require("../assets/images/card_example.png"),
-      name: "신한 어쩌구 카드",
-      info: "설명",
-    },
-    {
-      image: require("../assets/images/card_example.png"),
-      name: "신한 어쩌구 카드",
-      info: "설명",
-    },
-    {
-      image: require("../assets/images/card_example.png"),
-      name: "신한 어쩌구 카드",
-      info: "설명",
-    },
-    {
-      image: require("../assets/images/card_example.png"),
-      name: "신한 어쩌구 카드",
-      info: "설명",
-    },
-    {
-      image: require("../assets/images/card_example.png"),
-      name: "신한 어쩌구 카드",
-      info: "설명",
-    },
-    {
-      image: require("../assets/images/card_example.png"),
-      name: "신한 어쩌구 카드",
-      info: "설명",
-    },
-    {
-      image: require("../assets/images/card_example.png"),
-      name: "신한 어쩌구 카드",
-      info: "설명",
-    },
-    {
-      image: require("../assets/images/card_example.png"),
-      name: "신한 어쩌구 카드",
-      info: "설명",
-    },
-  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -75,7 +37,7 @@ export default function StoreDetailScreen() {
                         stylesSet={CategoryButtonStyles}
                     />*/}
           <Text style={styles.title}>{name}</Text>
-          <Text style={styles.storeInfo}>{storeInfo}</Text>
+          {/*<Text style={styles.storeInfo}>{storeInfo}</Text>*/}
         </View>
       </View>
       <ScrollView
@@ -83,12 +45,21 @@ export default function StoreDetailScreen() {
         contentContainerStyle={styles.content}
       >
         <Text style={styles.sectionTitle}>사용할 수 있는 카드</Text>
-        {cardList.map((card, i) => (
+        {store.availableCards.map((card: StoreCard, i: number) => (
           <View key={i} style={styles.cardBlock}>
-            <Image source={card.image} style={styles.cardImage} />
+            <Image
+              source={require("../assets/images/card_example.png")}
+              style={styles.cardImage}
+            />
             <View>
-              <Text style={styles.cardName}>{card.name}</Text>
-              <Text style={styles.cardInfo}>{card.info}</Text>
+              <Text style={styles.cardName}>{card.cardName}</Text>
+              <Text style={styles.cardInfo}>
+                {card.benefits.map((benefit: StoreBenefit, j: number) => (
+                  <View key={j} style={{ flexDirection: "column" }}>
+                    <Text>{benefit.benefitType}</Text>
+                  </View>
+                ))}
+              </Text>
             </View>
           </View>
         ))}
@@ -151,5 +122,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: Colors.TEXT_PRIMARY,
   },
-  cardInfo: {},
+  cardInfo: { flexDirection: "column" },
 });

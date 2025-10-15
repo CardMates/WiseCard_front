@@ -2,7 +2,7 @@ import { Store } from "@/src/constants/storeExamples";
 import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { router } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import StoreBlock from "./StoreBlock";
 
 interface BottomSheetProps {
@@ -38,7 +38,7 @@ export function BottomSheet({ isVisible, onClose, stores }: BottomSheetProps) {
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
-      index={0}
+      index={2}
       snapPoints={snapPoints}
       onChange={handleSheetChanges}
       backdropComponent={renderBackdrop}
@@ -56,16 +56,14 @@ export function BottomSheet({ isVisible, onClose, stores }: BottomSheetProps) {
               onPress={() =>
                 router.push({
                   pathname: "/StoreDetailScreen",
-                  params: { name: store.placeName },
+                  params: {
+                    storeData: JSON.stringify(store),
+                  },
                   // 추후 파라미터 수정
                 })
               }
             />
           ))}
-        {/* 테스트용 긴 콘텐츠 */}
-        {Array.from({ length: 20 }).map((_, i) => (
-          <Text key={i}>Item {i + 1}</Text>
-        ))}
       </BottomSheetScrollView>
     </BottomSheetModal>
   );

@@ -1,5 +1,6 @@
 import { categories } from "@/src/constants/categories";
-import { Store, storeExamples } from "@/src/constants/storeExamples";
+import { Store } from "@/src/constants/storeExamples";
+import { KakaoPlace } from "@/src/hooks/useKakao";
 import useLocaiton from "@/src/hooks/useLocation";
 import { filterOfflineStores, StoreFilters } from "@/src/hooks/useOfflineStore";
 import { CategoryButtonStyles } from "@/src/styles/buttons/CategoryBtn";
@@ -31,6 +32,7 @@ export default function KakaoMapView() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [stores, setStores] = useState<Store[]>([]);
+  const [storesFromKakao, setStoresFromKakao] = useState<KakaoPlace[]>([]);
 
   const [pageReady, setPageReady] = useState(false);
 
@@ -70,7 +72,7 @@ export default function KakaoMapView() {
 
       console.log(data);
 
-      setStores(storeExamples);
+      setStores(data.stores);
     } catch (error) {
       console.error("검색 요청 실패:", error);
     }
@@ -205,7 +207,7 @@ export default function KakaoMapView() {
                   icon={category.icon}
                   key={category.value} // 예: cafe
                   title={category.label} // 예: 카페
-                  onPress={() => handleCategorySelect(category.value)}
+                  onPress={() => handleCategorySelect(category.code)}
                   selected={selectedCategory === category.value}
                   stylesSet={CategoryButtonStyles}
                 />
